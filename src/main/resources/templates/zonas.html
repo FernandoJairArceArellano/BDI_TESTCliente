@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista de Usuarios</title>
+</head>
+<body>
+    <h1>Zonas</h1>
+    <!--<a href="/usuarios/nuevo">Agregar Usuario</a>-->
+    <ul>
+        <li th:each="zona : ${zonas}">
+            <span th:text="${zona.idTipoZona}">Id</span> - 
+            <span th:text="${zona.nombreTipoZona}">Nombre</span>
+        </li>
+    </ul>
+</body>
+</html>
