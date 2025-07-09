@@ -8,11 +8,94 @@
 
 <body>
     <section layout:fragment="content">
-
         <div class="container mt-4 mb-4 t-5">
-            <span>Hola mundo</span>
-        </div>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center fs-6 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th scope="col" class="w-50">Nombre Empresa</th>
+                            <th scope="col" class="w-50">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Pemex Transformación Industrial</th>
+                            <td class="align-middle" data-label="Acciones">
+                                <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                    <a class="btn btn-warning btn-sm btn-action btn-lg mb-2 rounded-circle">
+                                        <!-- th:href="@{/Usuario/Form/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}" -->
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a class="btn btn-success btn-sm btn-action btn-lg mb-2 rounded-circle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm btn-action btn-lg mb-2 rounded-circle">
+                                        <!-- th:href="@{/Usuario/Delete/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}" -->
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Naturgy Servicios</th>
+                            <td class="align-middle" data-label="Acciones">
+                                <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                    <a class="btn btn-warning btn-sm btn-action btn-lg mb-2 rounded-circle">
+                                        <!-- th:href="@{/Usuario/Form/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}" -->
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a class="btn btn-success btn-sm btn-action btn-lg mb-2 rounded-circle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a class="btn btn-danger btn-sm btn-action btn-lg mb-2 rounded-circle">
+                                        <!-- th:href="@{/Usuario/Delete/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}" -->
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <br>
+            <p>Salto de linea</p>
 
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">First</th>
+                        <th scope="col">Last</th>
+                        <th scope="col">Handle</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>Mark</td>
+                        <td>Otto</td>
+                        <td>@mdo</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">2</th>
+                        <td>Jacob</td>
+                        <td>Thornton</td>
+                        <td>@fat</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">3</th>
+                        <td>Larry</td>
+                        <td>the Bird</td>
+                        <td>@twitter</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="contianer">
+            <h1 class="container_title">Title</h1>
+            <p class="cotainer_paragraph"></p>
+            <p class="cotainer_paragraph"></p>
+        </div>
     </section>
 </body>
 

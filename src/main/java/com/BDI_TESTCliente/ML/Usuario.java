@@ -3,6 +3,7 @@ package com.BDI_TESTCliente.ML;
 public class Usuario {
 
     private int idUsuario;
+
     private String nombre;
 
     public int getIdUsuario() {
