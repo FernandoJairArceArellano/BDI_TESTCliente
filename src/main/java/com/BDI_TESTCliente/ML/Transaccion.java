@@ -15,9 +15,9 @@ public class Transaccion {
 
     private BigDecimal cantidadAsignadaRecepcion;
 
-    private BigDecimal cantidadNominalEntregada;
+    private BigDecimal cantidadNominadaEntregada;
 
-    private BigDecimal cantidadNominalRecepcion;
+    private BigDecimal cantidadNominadaRecepcion;
 
     private BigDecimal gasEnExceso;
 
@@ -79,20 +79,20 @@ public class Transaccion {
         this.cantidadAsignadaRecepcion = cantidadAsignadaRecepcion;
     }
 
-    public BigDecimal getCantidadNominalEntregada() {
-        return cantidadNominalEntregada;
+    public BigDecimal getCantidadNominadaEntregada() {
+        return cantidadNominadaEntregada;
     }
 
-    public void setCantidadNominalEntregada(BigDecimal cantidadNominalEntregada) {
-        this.cantidadNominalEntregada = cantidadNominalEntregada;
+    public void setCantidadNominadaEntregada(BigDecimal cantidadNominadaEntregada) {
+        this.cantidadNominadaEntregada = cantidadNominadaEntregada;
     }
 
-    public BigDecimal getCantidadNominalRecepcion() {
-        return cantidadNominalRecepcion;
+    public BigDecimal getCantidadNominadaRecepcion() {
+        return cantidadNominadaRecepcion;
     }
 
-    public void setCantidadNominalRecepcion(BigDecimal cantidadNominalRecepcion) {
-        this.cantidadNominalRecepcion = cantidadNominalRecepcion;
+    public void setCantidadNominadaRecepcion(BigDecimal cantidadNominadaRecepcion) {
+        this.cantidadNominadaRecepcion = cantidadNominadaRecepcion;
     }
 
     public BigDecimal getGasEnExceso() {

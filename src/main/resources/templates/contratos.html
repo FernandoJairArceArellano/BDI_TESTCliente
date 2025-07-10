@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultra.net.nz/thyemeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title layout:fragment="title">Contratos</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container mt-4 mb-4 t-5">
+            <h1>Contratos Registrados</h1>
+
+            <div th:if="${error}">
+                <p th:text="${error}" style="color: red;"></p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered text-center fs-6 align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID Contrato <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Código Contrato <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Fecha <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Zona Extracción <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Zona Inyección <i class="bi bi-arrow-down-up"></i></th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="contrato : ${contratos}">
+                            <td th:text="${contrato.idContrato}"></td>
+                            <td th:text="${contrato.codigoContrato}"></td>
+                            <td th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></td>
+                            <td
+                                th:text="${contrato.zonaExtraccion?.nombreZona != null ? contrato.zonaExtraccion.nombreZona : 'N/A'}">
+                            </td>
+                            <td
+                                th:text="${contrato.zonaInyeccion?.nombreZona != null ? contrato.zonaInyeccion.nombreZona : 'N/A'}">
+                            </td>
+                            <td>
+                                <a th:href="@{/detalleContrato/{id}(id=${contrato.idContrato})}"
+                                    class="btn btn-success btn-sm rounded-circle" title="Ver Detalle">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</body>
+
+</html>

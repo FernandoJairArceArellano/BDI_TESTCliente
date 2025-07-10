@@ -3,16 +3,17 @@
     layout:decorate="~{layout}">
 
 <head>
-    <title layout:fragment="title">Gaseo Ducto</title>
+    <title layout:fragment="title">Contrato</title>
 </head>
 
 <body>
     <section layout:fragment="content">
         <div class="container mt-4 mb-4 t-5">
-            <h1>Mensaje de Bienvenida</h1>
+            <h1>Detalle Contrato</h1>
             <div th:if="${error}">
                 <p th:text="${error}" style="color: red;"></p>
             </div>
+            + Nombre contrato
             <div class="table-responsive">
 
             </div>

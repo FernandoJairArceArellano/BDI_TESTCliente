@@ -2,7 +2,6 @@ package com.BDI_TESTCliente.ML;
 
 import java.util.Date;
 
-
 public class Contrato {
 
     private int idContrato;

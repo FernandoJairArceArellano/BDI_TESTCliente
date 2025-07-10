@@ -1,10 +1,14 @@
 package com.BDI_TESTCliente.ML;
 
+import java.util.List;
+
 public class Usuario {
 
     private int idUsuario;
 
     private String nombre;
+
+    private List<Contrato> contratos;
 
     public int getIdUsuario() {
         return idUsuario;
@@ -20,6 +24,14 @@ public class Usuario {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public List<Contrato> getContratos() {
+        return contratos;
+    }
+
+    public void setContratos(List<Contrato> contratos) {
+        this.contratos = contratos;
     }
 
 }
