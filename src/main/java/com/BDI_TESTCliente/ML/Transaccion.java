@@ -25,9 +25,9 @@ public class Transaccion {
 
     private BigDecimal cargoGasEnExceso;
 
-    private BigDecimal tarifaExceso;
+    private BigDecimal tarifaExcesoFirme;
 
-    private BigDecimal tarifaUsoIterrumpible;
+    private BigDecimal tarifaUsoInterrumpible;
 
     private BigDecimal totalAFacturar;
 
@@ -119,20 +119,20 @@ public class Transaccion {
         this.cargoGasEnExceso = cargoGasEnExceso;
     }
 
-    public BigDecimal getTarifaExceso() {
-        return tarifaExceso;
+    public BigDecimal getTarifaExcesoFirme() {
+        return tarifaExcesoFirme;
     }
 
-    public void setTarifaExceso(BigDecimal tarifaExceso) {
-        this.tarifaExceso = tarifaExceso;
+    public void setTarifaExcesoFirme(BigDecimal tarifaExcesoFirme) {
+        this.tarifaExcesoFirme = tarifaExcesoFirme;
     }
 
-    public BigDecimal getTarifaUsoIterrumpible() {
-        return tarifaUsoIterrumpible;
+    public BigDecimal getTarifaUsoInterrumpible() {
+        return tarifaUsoInterrumpible;
     }
 
-    public void setTarifaUsoIterrumpible(BigDecimal tarifaUsoIterrumpible) {
-        this.tarifaUsoIterrumpible = tarifaUsoIterrumpible;
+    public void setTarifaUsoInterrumpible(BigDecimal tarifaUsoInterrumpible) {
+        this.tarifaUsoInterrumpible = tarifaUsoInterrumpible;
     }
 
     public BigDecimal getTotalAFacturar() {

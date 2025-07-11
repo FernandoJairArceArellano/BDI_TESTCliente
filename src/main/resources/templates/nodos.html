@@ -3,51 +3,149 @@
     layout:decorate="~{layout}">
 
 <head>
-    <title layout:fragment="title">Contratos</title>
+    <title layout:fragment="title">Nodos</title>
+    <style>
+        .hover-effect-recepccion:hover {
+            background-color: var(--bs-primary);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+
+        .hover-effect-entrega:hover {
+            background-color: var(--bs-success);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+
+        .scroll-area {
+            height: 80vh;
+            /* ajusta según lo que necesites */
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+    </style>
+
 </head>
 
 <body>
     <section layout:fragment="content">
         <div class="container mt-4 mb-4 t-5">
-            <h2 class="mb-3">Nodos de Recepción</h2>
-
-            <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${nodosRecepcion != null}">
-                <div class="col" th:each="nodo : ${nodosRecepcion}">
-                    <a th:href="@{/detalleZona/{id}(id=${nodo.idNodoRecepccion})}"
-                        class="text-decoration-none text-reset d-block h-100">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-text fw-bold " th:text="${nodo.codigoNodo}">Código nodo</h5>
-                                <!-- <h6 class="card-subtitle mb-2 text-muted" th:text="'ID: ' + ${nodo.idNodoRecepccion}">ID</h6> -->
-                                <p class="card-title" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
-                            </div>
-                        </div>
-                    </a>
+            <h2 class="form-label">Buscar Nodos</h2>
+            <div class="input-group input-group-lg mb-3">
+                <input id="searchInput" class="form-control" type="text" placeholder="Buscar por nombre o código"
+                    aria-label="Search">
+                <span class="input-group-text text-dark-emphasis"><i class="bi bi-search"></i></span>
+                <div class="btn-group ms-2">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Filtrar grupo
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item group-filter" href="#" data-group="all">Todos</a></li>
+                        <li><a class="dropdown-item group-filter" href="#" data-group="recepcion">Nodos de Recepción</a>
+                        </li>
+                        <li><a class="dropdown-item group-filter" href="#" data-group="entrega">Nodos de Entrega</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
+        </div>
 
-            <h2 class="mb-3">Nodos de Entrega</h2>
+        <div class="container mt-4 mb-4 t-5">
 
-            <div class="row row-cols-1 row-cols-md-3 g-3" th:if="${nodosEntrega != null}">
-                <div class="col" th:each="nodo : ${nodosEntrega}">
-                    <a th:href="@{/detalleZona/{id}(id=${nodo.idNodoEntrega})}"
-                        class="text-decoration-none text-reset d-block h-100">
-                        <div class="card h-100 shadow-sm border-success">
-                            <div class="card-body">
-                                <h5 class="card-text fw-bold " th:text="${nodo.codigoNodo}">Código nodo</h5>
-                                <!-- <h6 class="card-subtitle mb-2 text-muted" th:text="'ID: ' + ${nodo.idNodoEntrega}">ID</h6> -->
-                                <p class="card-title" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
+            <div class="container">
+                <div class="row">
+
+                    <div class="col nodo-group scroll-area" data-group="recepcion">
+                        <h3 class="mb-3">Nodos de Recepción</h3>
+                        <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${nodosRecepcion != null}">
+                            <div class="col" th:each="nodo : ${nodosRecepcion}">
+                                <a th:href="@{/detalleZona/{id}(id=${nodo.idNodoRecepccion})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div class="card h-100 shadow-sm border border-primary text-dark hover-effect-recepccion nodo-card"
+                                        th:attr="data-codigo=${nodo.codigoNodo}"
+                                        th:attrappend="data-nombre=${nodo.nombreNodoComercial}">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold" th:text="${nodo.codigoNodo}">Código nodo</h5>
+                                            <p class="card-text" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
+                                        </div>
+                                    </div>
+                                </a>
                             </div>
                         </div>
-                    </a>
-                </div>
-            </div>
+                    </div>
 
-            <div th:if="${error != null}">
-                <div class="alert alert-danger" th:text="${error}">Error al cargar nodos</div>
+                    <div class="col nodo-group scroll-area" data-group="entrega">
+                        <h3 class="mb-3">Nodos de Entrega</h3>
+
+                        <div class="row row-cols-1 row-cols-md-3 g-3" th:if="${nodosEntrega != null}">
+                            <div class="col" th:each="nodo : ${nodosEntrega}">
+                                <a th:href="@{/detalleZona/{id}(id=${nodo.idNodoEntrega})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div class="card h-100 shadow-sm border border-success text-dark hover-effect-entrega nodo-card"
+                                        th:attr="data-codigo=${nodo.codigoNodo}"
+                                        th:attrappend="data-nombre=${nodo.nombreNodoComercial}">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold " th:text="${nodo.codigoNodo}">Código nodo
+                                            </h5>
+                                            <!-- <h6 class="card-subtitle mb-2 text-muted" th:text="'ID: ' + ${nodo.idNodoEntrega}">ID</h6> -->
+                                            <p class="card-text" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${error != null}">
+                    <div class="alert alert-danger" th:text="${error}">Error al cargar nodos</div>
+                </div>
             </div>
 
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const input = document.getElementById("searchInput");
+
+                input.addEventListener("keyup", function () {
+                    const searchText = input.value.toLowerCase();
+                    const groups = document.querySelectorAll(".nodo-group");
+
+                    groups.forEach(group => {
+                        let matchFound = false;
+                        const cards = group.querySelectorAll(".nodo-card");
+
+                        cards.forEach(card => {
+                            const codigo = card.getAttribute("data-codigo").toLowerCase();
+                            const nombre = card.getAttribute("data-nombre").toLowerCase();
+
+                            const visible = searchText === "" || codigo.includes(searchText) || nombre.includes(searchText);
+
+                            card.closest('.col').style.display = visible ? "block" : "none";
+                            if (visible) matchFound = true;
+                        });
+
+                        group.style.display = matchFound ? "block" : "none";
+                    });
+                });
+            });
+
+            document.querySelectorAll(".group-filter").forEach(item => {
+                item.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const grupoSeleccionado = this.getAttribute("data-group");
+
+                    document.querySelectorAll(".nodo-group").forEach(group => {
+                        const groupType = group.getAttribute("data-group");
+
+                        // Mostrar todos si es 'all', o el grupo coincidente
+                        group.style.display = (grupoSeleccionado === "all" || groupType === grupoSeleccionado) ? "block" : "none";
+                    });
+                });
+            });
+        </script>
+
 
     </section>
 </body>

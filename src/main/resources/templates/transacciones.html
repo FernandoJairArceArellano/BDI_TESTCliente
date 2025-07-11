@@ -4,18 +4,23 @@
 
 <head>
     <title layout:fragment="title">Transacciones</title>
+    <!-- DataTables CSS library -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" />
+
+    <!-- DataTables JS library -->
+    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
 </head>
 
 <body>
     <section layout:fragment="content">
         <div class="container mt-4 mb-4 t-5">
-            <h1>Mensaje de Bienvenida</h1>
+            <h1>Transacciones registradas</h1>
             <div th:if="${error}">
                 <p th:text="${error}" style="color: red;"></p>
             </div>
             <div class="table-responsive">
-                <table class="table">
-                    <thead class="table-dark">
+                <table class="table table-striped" id="myTable" cellspacing="0" width="100%">
+                    <thead>
                         <tr>
                             <th>Id Contrato</th>
                             <th>Cantidad Asignada Entregada</th>
@@ -28,6 +33,7 @@
                             <th>Tarifa Exceso Firme</th>
                             <th>Tarifa Uso Interrumpible</th>
                             <th>Total a Facturar</th>
+                            <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,11 +49,26 @@
                             <td th:text="${transaccion.tarifaExcesoFirme}"></td>
                             <td th:text="${transaccion.tarifaUsoInterrumpible}"></td>
                             <td th:text="${transaccion.totalAFacturar}"></td>
+                            <td>
+                                <a th:href="@{/detalleTransaccion(idOperacion=${transaccion.idOperacion})}"
+                                    class="btn btn-success btn-md rounded-circle" style="width: 3rem; height: 3rem;"
+                                    title="Ver Detalle">
+                                    <i class="bi bi-eye fs-5"></i>
+                                </a>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
+
+        <script>
+            new DataTable('#myTable', {
+                paging: true,
+                scrollCollapse: true,
+                scrollY: '50vh'
+            });
+        </script>
 
     </section>
 </body>
