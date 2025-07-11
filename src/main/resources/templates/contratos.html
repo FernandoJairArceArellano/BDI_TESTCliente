@@ -11,6 +11,11 @@
         <div class="container mt-4 mb-4 t-5">
             <h1>Contratos Registrados</h1>
 
+            <div class="position-relative mb-3 w-50">
+                <input type="text" id="search-input" class="form-control" placeholder="Buscar contrato, zona o fecha">
+                <ul id="autocomplete-list" class="list-group position-absolute w-100" style="z-index: 999;"></ul>
+            </div>
+
             <div th:if="${error}">
                 <p th:text="${error}" style="color: red;"></p>
             </div>
@@ -19,17 +24,37 @@
                 <table class="table table-hover table-bordered text-center fs-6 align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>ID Contrato <i class="bi bi-arrow-down-up"></i></th>
-                            <th>Código Contrato <i class="bi bi-arrow-down-up"></i></th>
-                            <th>Fecha <i class="bi bi-arrow-down-up"></i></th>
-                            <th>Zona Extracción <i class="bi bi-arrow-down-up"></i></th>
-                            <th>Zona Inyección <i class="bi bi-arrow-down-up"></i></th>
+                            <th style="display: grap;">
+                                ID Contrato
+                                <i class="bi bi-arrow-down-up sort-icon" data-column="0" data-type="number"
+                                    title="Ordenar por ID"></i>
+                            </th>
+                            <th>
+                                Código Contrato
+                                <i class="bi bi-arrow-down-up sort-icon" data-column="1" data-type="text"
+                                    title="Ordenar por Código Contrato"></i>
+                            </th>
+                            <th>
+                                Fecha
+                                <i class="bi bi-arrow-down-up sort-icon" data-column="2" data-type="date"
+                                    title="Ordenar por Fecha"></i>
+                            </th>
+                            <th>
+                                Zona Extracción
+                                <i class="bi bi-arrow-down-up sort-icon" data-column="3" data-type="text"
+                                    title="Ordenar por Zona Extracción"></i>
+                            </th>
+                            <th>
+                                Zona Inyección
+                                <i class="bi bi-arrow-down-up sort-icon" data-column="4" data-type="text"
+                                    title="Ordenar por Zona Inyección"></i>
+                            </th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="tbody-contratos">
                         <tr th:each="contrato : ${contratos}">
-                            <td th:text="${contrato.idContrato}"></td>
+                            <td th:text="${contrato.idContrato}" style="display: grap;"></td>
                             <td th:text="${contrato.codigoContrato}"></td>
                             <td th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></td>
                             <td
@@ -38,11 +63,19 @@
                             <td
                                 th:text="${contrato.zonaInyeccion?.nombreZona != null ? contrato.zonaInyeccion.nombreZona : 'N/A'}">
                             </td>
-                            <td>
-                                <a th:href="@{/detalleContrato/{id}(id=${contrato.idContrato})}"
-                                    class="btn btn-success btn-sm rounded-circle" title="Ver Detalle">
-                                    <i class="bi bi-eye"></i>
-                                </a>
+                            <td class="align-middle" data-label="Acciones">
+                                <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                    <a th:href="@{/detalleContrato(codigo=${contrato.codigoContrato})}"
+                                        class="btn btn-success btn-md rounded-circle"
+                                        style="width: 3rem; height: 3rem;" title="Ver Detalle">
+                                        <i class="bi bi-eye fs-5"></i>
+                                    </a>
+                                    <a th:href="@{/detalleUsuario(nombre=${contrato.usuario.nombre})}"
+                                        class="btn btn-primary btn-md rounded-circle"
+                                        style="width: 3rem; height: 3rem;" title="Usuario">
+                                        <i class="bi bi-person-circle fs-5"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -50,6 +83,141 @@
             </div>
         </div>
 
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const icons = document.querySelectorAll(".sort-icon");
+                const tableBody = document.getElementById("tbody-contratos");
+                const originalHTML = tableBody.innerHTML;
+
+                let sortState = {
+                    column: null,
+                    direction: 0
+                };
+
+                icons.forEach(icon => {
+                    icon.addEventListener("click", () => {
+                        const colIndex = parseInt(icon.dataset.column);
+                        const type = icon.dataset.type;
+
+                        if (sortState.column === colIndex) {
+                            sortState.direction = (sortState.direction + 1) % 3;
+                        } else {
+                            sortState.column = colIndex;
+                            sortState.direction = 1;
+                        }
+
+                        icons.forEach(i => {
+                            i.className = "bi bi-arrow-down-up sort-icon";
+                            i.classList.remove("text-primary")
+                        });
+
+                        if (sortState.direction === 0) {
+                            tableBody.innerHTML = originalHTML;
+                            return;
+                        }
+
+                        icon.classList.add("text-primary");
+                        icon.classList.remove("bi-arrow-down-up");
+                        icon.classList.add(sortState.direction === 1 ? "bi-arrow-down" : "bi-arrow-up");
+
+                        const rows = Array.from(tableBody.querySelectorAll("tr"));
+
+                        rows.sort((a, b) => {
+                            let aText = a.children[colIndex].innerText.trim();
+                            let bText = b.children[colIndex].innerText.trim();
+
+                            if (type === "number") {
+                                aText = parseInt(aText) || 0;
+                                bText = parseInt(bText) || 0;
+                            } else {
+                                aText = aText.toLowerCase();
+                                bText = bText.toLowerCase();
+                            }
+
+                            if (aText < bText) return sortState.direction === 1 ? -1 : 1;
+                            if (aText > bText) return sortState.direction === 1 ? 1 : -1;
+                            return 0;
+                        });
+
+                        tableBody.innerHTML = "";
+                        rows.forEach(row => tableBody.appendChild(row));
+                    });
+                });
+
+                const searchInput = document.getElementById('search-input');
+                const autocompleteList = document.getElementById('autocomplete-list');
+                const tableRows = tableBody.querySelectorAll("tr");
+
+                // Obtener términos únicos de todas las celdas para sugerencias
+                const allTerms = new Set();
+                tableRows.forEach(row => {
+                    row.querySelectorAll("td").forEach(cell => {
+                        const value = cell.innerText.trim();
+                        if (value && value.length > 0) allTerms.add(value);
+                    });
+                });
+
+                const termsArray = Array.from(allTerms);
+
+                // Mostrar sugerencias al escribir
+                searchInput.addEventListener("input", function () {
+                    const value = this.value.toLowerCase();
+                    autocompleteList.innerHTML = "";
+
+                    if (value === "") {
+                        mostrarTodasLasFilas();
+                        return;
+                    }
+
+                    const filteredTerms = termsArray.filter(term => term.toLowerCase().includes(value));
+
+                    filteredTerms.slice(0, 6).forEach(term => {
+                        const li = document.createElement("li");
+                        li.classList.add("list-group-item", "list-group-item-action", "cursor-pointer");
+                        li.textContent = term;
+                        li.addEventListener("click", function () {
+                            searchInput.value = term;
+                            autocompleteList.innerHTML = "";
+                            filtrarTabla(term);
+                        });
+                        autocompleteList.appendChild(li);
+                    });
+                });
+
+                // Ocultar sugerencias si se hace clic fuera
+                document.addEventListener("click", function (e) {
+                    if (!autocompleteList.contains(e.target) && e.target !== searchInput) {
+                        autocompleteList.innerHTML = "";
+                    }
+                });
+
+                // Filtrar tabla según texto
+                function filtrarTabla(filtro = searchInput.value.toLowerCase()) {
+                    tableRows.forEach(row => {
+                        const textoFila = Array.from(row.querySelectorAll("td"))
+                            .map(cell => cell.innerText.toLowerCase())
+                            .join(" ");
+
+                        row.style.display = textoFila.includes(filtro.toLowerCase()) ? "" : "none";
+                    });
+                }
+
+                // Buscar al presionar Enter
+                searchInput.addEventListener("keyup", function (e) {
+                    if (e.key === "Enter") {
+                        filtrarTabla();
+                        autocompleteList.innerHTML = "";
+                    }
+                });
+
+                function mostrarTodasLasFilas() {
+                    tableRows.forEach(row => {
+                        row.style.display = "";
+                    });
+                }
+
+            });
+        </script>
     </section>
 </body>
 

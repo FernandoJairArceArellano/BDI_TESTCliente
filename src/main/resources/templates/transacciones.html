@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultra.net.nz/thyemeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title layout:fragment="title">Transacciones</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container mt-4 mb-4 t-5">
+            <h1>Mensaje de Bienvenida</h1>
+            <div th:if="${error}">
+                <p th:text="${error}" style="color: red;"></p>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Id Contrato</th>
+                            <th>Cantidad Asignada Entregada</th>
+                            <th>Cantidad Asignada Recepcion</th>
+                            <th>Cantidad Nominada Entregada</th>
+                            <th>Cantidad Nominada Recepcion</th>
+                            <th>Gas en Exceso</th>
+                            <th>Cargo Uso</th>
+                            <th>Cargo Gas en Exceso</th>
+                            <th>Tarifa Exceso Firme</th>
+                            <th>Tarifa Uso Interrumpible</th>
+                            <th>Total a Facturar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="transaccion : ${transacciones}">
+                            <th th:text="${transaccion.idOperacion}"></th>
+                            <td th:text="${transaccion.cantidadAsignadaEntregada}"></td>
+                            <td th:text="${transaccion.cantidadAsignadaRecepcion}"></td>
+                            <td th:text="${transaccion.cantidadNominadaEntregada}"></td>
+                            <td th:text="${transaccion.cantidadNominadaRecepcion}"></td>
+                            <td th:text="${transaccion.gasEnExceso}"></td>
+                            <td th:text="${transaccion.cargoGasEnExceso}"></td>
+                            <td th:text="${transaccion.cargoUso}"></td>
+                            <td th:text="${transaccion.tarifaExcesoFirme}"></td>
+                            <td th:text="${transaccion.tarifaUsoInterrumpible}"></td>
+                            <td th:text="${transaccion.totalAFacturar}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </section>
+</body>
+
+</html>

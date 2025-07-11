@@ -1,20 +1,24 @@
 package com.BDI_TESTCliente.Controller;
 
 import com.BDI_TESTCliente.ML.Contrato;
+import com.BDI_TESTCliente.ML.NodoEntrega;
+import com.BDI_TESTCliente.ML.NodoRecepccion;
 import com.BDI_TESTCliente.ML.Result;
+import com.BDI_TESTCliente.ML.Transaccion;
 import com.BDI_TESTCliente.ML.Usuario;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 @Controller
@@ -25,13 +29,17 @@ public class PaginaController {
 
     private final String apiContratoUrl = "http://localhost:8081/api/contratos/v1";
 
+    private final String apiNodoUrl = "http://localhost:8081/api/nodos/v1";
+
+    private final String apiTransaccion = "http://localhost:8081/api/transacciones/v1";
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/index")
     public String index() {
         return "index";
     }
-    
+
     @GetMapping("/usuarios")
     public String mostrarUsuarios(Model model) {
         // GET de usuarios
@@ -72,6 +80,37 @@ public class PaginaController {
         return "usuarios";
     }
 
+    @GetMapping("/nodos")
+    public String mostrarNodos(Model model) {
+        ResponseEntity<Result<NodoRecepccion>> responseRecepccion = restTemplate.exchange(
+                apiNodoUrl + "/recepccion",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<NodoRecepccion>>() {
+        });
+
+        Result<NodoRecepccion> resultRecepcion = responseRecepccion.getBody();
+
+        ResponseEntity<Result<NodoEntrega>> responseEntrega = restTemplate.exchange(
+                apiNodoUrl + "/entrega",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<NodoEntrega>>() {
+        });
+
+        Result<NodoEntrega> resultEntrega = responseEntrega.getBody();
+
+        if (resultRecepcion != null & resultRecepcion.correct & responseEntrega != null & resultEntrega.correct) {
+            List<NodoRecepccion> nodosRecepcion = resultRecepcion.objects;
+            model.addAttribute("nodosRecepcion", nodosRecepcion);
+            List<NodoEntrega> nodosEntrega = resultEntrega.objects;
+            model.addAttribute("nodosEntrega", nodosEntrega);
+        } else {
+            model.addAttribute("error", resultRecepcion != null ? resultRecepcion.errorMessage : "Error desconocido");
+        }
+        return "nodos";
+    }
+
     @GetMapping("/contratos")
     public String mostrarContratos(Model model) {
         ResponseEntity<Result<Contrato>> responseContratos = restTemplate.exchange(
@@ -82,23 +121,89 @@ public class PaginaController {
         }
         );
 
-        Result<Contrato> resultContrato = responseContratos.getBody();
+        Result<Contrato> resultContratos = responseContratos.getBody();
 
-        if (resultContrato != null && resultContrato.correct) {
-            List<Contrato> contratos = resultContrato.objects;
+        if (resultContratos != null && resultContratos.correct) {
+            List<Contrato> contratos = resultContratos.objects;
 
             model.addAttribute("contratos", contratos);
         } else {
-            model.addAttribute("error", resultContrato != null ? resultContrato.errorMessage : "Error desconocido");
+            model.addAttribute("error", resultContratos != null ? resultContratos.errorMessage : "Error desconocido");
         }
         return "contratos";
     }
 
-    @GetMapping("/detalleContrato/{idContrato}")
-    public String mostrarDetalleContrato(@PathVariable int idContrato, Model model) {
-        // Buscar contrato por ID
-        // Agregarlo al modelo
-        return "detalleContrato"; // nombre de tu vista HTML
+    @GetMapping("/transacciones")
+    public String mostrarTransacciones(Model model) {
+        ResponseEntity<Result<Transaccion>> responseTransacciones = restTemplate.exchange(
+                apiTransaccion + "/transacciones",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<Transaccion>>() {
+
+        });
+
+        Result<Transaccion> resultTransaccion = responseTransacciones.getBody();
+
+        if (resultTransaccion != null && resultTransaccion.correct) {
+            List<Transaccion> transacciones = resultTransaccion.objects;
+            model.addAttribute("transacciones", transacciones);
+        } else {
+            model.addAttribute("error", resultTransaccion != null ? resultTransaccion.errorMessage : "Error desconocido");
+        }
+
+        return "transacciones";
+    }
+
+    @GetMapping("/detalleContrato")
+    public String obtenerContratoPorCodigo(@RequestParam("codigo") String codigoContrato, Model model) {
+        try {
+
+            ResponseEntity<Result<Contrato>> response = restTemplate.exchange(
+                    apiContratoUrl + "/por-codigo-contrato?codigoContrato=" + codigoContrato,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Result<Contrato>>() {
+            }
+            );
+
+            Result<Contrato> resultContrato = response.getBody();
+
+            if (resultContrato != null && resultContrato.correct) {
+                model.addAttribute("contrato", resultContrato.object);
+            } else {
+                model.addAttribute("error", resultContrato != null ? resultContrato.errorMessage : "Contrato no encontrado.");
+            }
+
+        } catch (Exception ex) {
+            model.addAttribute("error", "Error al obtener contrato: " + ex.getMessage());
+        }
+
+        return "detalleContrato";
+    }
+
+    @GetMapping("/detalleUsuario")
+    public String mostrarDetalleUsuario(@RequestParam("nombre") String nombre, Model model) {
+        try {
+            ResponseEntity<Result<Usuario>> response = restTemplate.exchange(
+                    apiUsuarioUrl + "/por-nombre?nombre=" + nombre,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Usuario>>() {
+
+            });
+
+            Result<Usuario> resultUsuario = response.getBody();
+
+            if (resultUsuario != null && resultUsuario.correct) {
+                model.addAttribute("usuario", resultUsuario.object);
+            } else {
+                model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
+            }
+        } catch (Exception ex) {
+            model.addAttribute("error", "Error al obtener usuario: " + ex.getMessage());
+        }
+        return "detalleUsuario";
     }
 
     @GetMapping("/cargaMasiva")

@@ -8,17 +8,34 @@
 
 <body>
     <section layout:fragment="content">
-        <div class="container mt-4 mb-4 t-5">
-            <h1>Detalle Contrato</h1>
-            <div th:if="${error}">
-                <p th:text="${error}" style="color: red;"></p>
-            </div>
-            + Nombre contrato
-            <div class="table-responsive">
+        <div class="container mt-4 mb-4">
+            <h1 class="mb-4">Detalle del Contrato</h1>
 
+            <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+            <div th:if="${contrato}" class="card shadow p-4">
+                <h4 th:text="'Código: ' + ${contrato.codigoContrato}"></h4>
+                <p><strong>Fecha:</strong> <span th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></span></p>
+
+                <div class="mt-3">
+                    <h5 class="mb-2">Zona de Extracción</h5>
+                    <p><strong>ID:</strong> <span th:text="${contrato.zonaExtraccion.idZonaExtraccion}"></span></p>
+                    <p><strong>Nombre:</strong> <span th:text="${contrato.zonaExtraccion.nombreZona}"></span></p>
+                </div>
+
+                <div class="mt-3">
+                    <h5 class="mb-2">Zona de Inyección</h5>
+                    <p><strong>ID:</strong> <span th:text="${contrato.zonaInyeccion.idZonaInyeccion}"></span></p>
+                    <p><strong>Nombre:</strong> <span th:text="${contrato.zonaInyeccion.nombreZona}"></span></p>
+                </div>
+
+                <div class="mt-3">
+                    <h5 class="mb-2">Usuario</h5>
+                    <p><strong>ID:</strong> <span th:text="${contrato.usuario.idUsuario}"></span></p>
+                    <p><strong>Nombre:</strong> <span th:text="${contrato.usuario.nombre}"></span></p>
+                </div>
             </div>
         </div>
-
     </section>
 </body>
 

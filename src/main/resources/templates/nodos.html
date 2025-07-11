@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultra.net.nz/thyemeleaf/layout"
+    layout:decorate="~{layout}">
+
+<head>
+    <title layout:fragment="title">Contratos</title>
+</head>
+
+<body>
+    <section layout:fragment="content">
+        <div class="container mt-4 mb-4 t-5">
+            <h2 class="mb-3">Nodos de Recepción</h2>
+
+            <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${nodosRecepcion != null}">
+                <div class="col" th:each="nodo : ${nodosRecepcion}">
+                    <a th:href="@{/detalleZona/{id}(id=${nodo.idNodoRecepccion})}"
+                        class="text-decoration-none text-reset d-block h-100">
+                        <div class="card h-100 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-text fw-bold " th:text="${nodo.codigoNodo}">Código nodo</h5>
+                                <!-- <h6 class="card-subtitle mb-2 text-muted" th:text="'ID: ' + ${nodo.idNodoRecepccion}">ID</h6> -->
+                                <p class="card-title" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <h2 class="mb-3">Nodos de Entrega</h2>
+
+            <div class="row row-cols-1 row-cols-md-3 g-3" th:if="${nodosEntrega != null}">
+                <div class="col" th:each="nodo : ${nodosEntrega}">
+                    <a th:href="@{/detalleZona/{id}(id=${nodo.idNodoEntrega})}"
+                        class="text-decoration-none text-reset d-block h-100">
+                        <div class="card h-100 shadow-sm border-success">
+                            <div class="card-body">
+                                <h5 class="card-text fw-bold " th:text="${nodo.codigoNodo}">Código nodo</h5>
+                                <!-- <h6 class="card-subtitle mb-2 text-muted" th:text="'ID: ' + ${nodo.idNodoEntrega}">ID</h6> -->
+                                <p class="card-title" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+
+            <div th:if="${error != null}">
+                <div class="alert alert-danger" th:text="${error}">Error al cargar nodos</div>
+            </div>
+
+        </div>
+
+    </section>
+</body>
+
+</html>

@@ -28,45 +28,53 @@
                 <table class="table table-hover table-bordered text-center fs-6 align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col" class="w-50">
+                            <th class="w-50">
                                 Nombre Empresa
                                 <i class="bi bi-arrow-down-up sort-icon" data-column="0" data-type="text"
                                     title="Ordenar por nombre"></i>
                             </th>
-                            <th scope="col" class="w-25">
+                            <th class="w-25">
                                 Contratos Registrados
                                 <i class="bi bi-arrow-down-up sort-icon" data-column="1" data-type="number"
                                     title="Ordenar por contratos"></i>
                             </th>
-                            <th scope="col" class="w-auto">Acciones</th>
+                            <th class="w-auto">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-usuarios">
                         <tr th:each="usuario : ${usuarios}">
-                            <th th:text="${usuario.nombre}" scope="row"></th>
+                            <th th:text="${usuario.nombre}"></th>
                             <td>
                                 <span
                                     th:text="${contratosPorUsuario[usuario.idUsuario] != null ? contratosPorUsuario[usuario.idUsuario] : 'Sin contratos registrados'}"></span>
                             </td>
                             <td class="align-middle" data-label="Acciones">
                                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                    <a th:href="@{/detalleUsuario(nombre=${usuario.nombre})}"
+                                        class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                        style="width: 3rem; height: 3rem;" title="Usuario">
+                                        <i class="bi bi-person-circle fs-5"></i>
+                                    </a>
+
                                     <button title="Editar datos"
-                                        class="btn btn-warning btn-sm btn-action btn-lg mb-2 rounded-circle edit-btn"
-                                        th:data-idusuario="${usuario.idUsuario}" th:data-nombre="${usuario.nombre}">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button title="Ver contratos"
-                                        class="btn btn-success btn-sm btn-action btn-lg mb-2 rounded-circle view-contracts-btn"
-                                        th:data-idusuario="${usuario.idUsuario}" th:data-nombre="${usuario.nombre}">
-                                        <i class="bi bi-eye"></i>
+                                        class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
+                                        style="width: 3rem; height: 3rem;" th:data-idusuario="${usuario.idUsuario}"
+                                        th:data-nombre="${usuario.nombre}">
+                                        <i class="bi bi-pencil-square fs-5"></i>
                                     </button>
 
-                                    <a class="btn btn-danger btn-sm btn-action btn-lg mb-2 rounded-circle">
-                                        <!-- th:href="@{/Usuario/Delete/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}" -->
-                                        <i class="bi bi-trash3"></i>
-                                    </a>
+                                    <button title="Ver contratos"
+                                        class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
+                                        style="width: 3rem; height: 3rem;" th:data-idusuario="${usuario.idUsuario}"
+                                        th:data-nombre="${usuario.nombre}">
+                                        <i class="bi bi-person-lines-fill fs-5"></i>
+                                    </button>
                                 </div>
                             </td>
+                            <!-- <a class="btn btn-danger btn-sm btn-action btn-md mb-2 rounded-circle">
+                                th:href="@{/Usuario/Delete/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"
+                                <i class="bi bi-trash3"></i>
+                            </a> -->
                         </tr>
                     </tbody>
                 </table>
@@ -136,23 +144,140 @@
             </div>
         </div>
 
-
         <script>
-            $(document).ready(function () {
-                $('.edit-btn').click(function () {
+            document.addEventListener("DOMContentLoaded", function () {
+                const editModalInstance = new bootstrap.Modal(document.getElementById('editUserModal'));
+                const viewContractsModalInstance = new bootstrap.Modal(document.getElementById('viewContractsModal'));
+
+                // Evento para el botón de editar
+                $('#tbody-usuarios').on('click', '.edit-btn', function () {
                     $('#editUserForm')[0].reset();
                     const nombre = $(this).data('nombre');
                     const idUsuario = $(this).data('idusuario');
 
                     $('#idUsuario').val(idUsuario);
                     $('#nombre').val(nombre);
-
                     $('#modalUserName').text(nombre);
 
-                    const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
-                    modal.show();
+                    editModalInstance.show();
                 });
 
+                // Evento para el botón de ver contratos
+                $('#tbody-usuarios').on('click', '.view-contracts-btn', function () {
+                    const idUsuario = $(this).data('idusuario');
+                    const nombreUsuario = $(this).data('nombre');
+
+                    $('#viewUserName').text(nombreUsuario);
+                    $('#contractsTableBody').empty();
+
+                    $.ajax({
+                        url: `http://localhost:8081/api/contratos/v1/por-usuario-id?id=${idUsuario}`,
+                        method: 'GET',
+                        success: function (response) {
+                            if (response.correct && response.objects && response.objects.length > 0) {
+                                response.objects.forEach((contrato) => {
+                                    const row = `
+                                <tr>
+                                    <td>${contrato.idContrato}</td>
+                                    <td>${contrato.codigoContrato}</td>
+                                    <td>${new Date(contrato.fecha).toLocaleDateString()}</td>
+                                    <td>${contrato.zonaExtraccion?.nombreZona || 'N/A'}</td>
+                                    <td>${contrato.zonaInyeccion?.nombreZona || 'N/A'}</td>
+                                    <td>
+                                        <a title="Ver contrato"
+                                            class="btn btn-success btn-sm btn-action btn-lg mb-2 rounded-circle"
+                                            href="/detalleContrato?codigo=${encodeURIComponent(contrato.codigoContrato)}"
+                                            style="width: 3rem; height: 3rem;">
+                                            <i class="bi bi-eye fs-4"></i>
+                                        </a>
+                                    </td>
+                                </tr>`;
+                                    $('#contractsTableBody').append(row);
+                                });
+                            } else {
+                                $('#contractsTableBody').append('<tr><td colspan="6">No hay contratos registrados</td></tr>');
+                            }
+
+                            viewContractsModalInstance.show();
+                        },
+                        error: function () {
+                            alert('Error al obtener contratos del usuario');
+                        }
+                    });
+                });
+
+                // Limpieza manual de backdrop (fallback |retroceder| si Bootstrap falla)
+                document.getElementById('editUserModal').addEventListener('hidden.bs.modal', () => {
+                    document.body.classList.remove('modal-open');
+                    $('.modal-backdrop').remove();
+                });
+                document.getElementById('viewContractsModal').addEventListener('hidden.bs.modal', () => {
+                    document.body.classList.remove('modal-open');
+                    $('.modal-backdrop').remove();
+                });
+
+                // Guardar HTML original para restaurar la tabla
+                const icons = document.querySelectorAll(".sort-icon");
+                const tableBody = document.getElementById("tbody-usuarios");
+                const originalHTML = tableBody.innerHTML;
+
+                let sortState = {
+                    column: null,
+                    direction: 0 // 0: sin ordenar, 1: ascendente, 2: descendente
+                };
+
+                icons.forEach(icon => {
+                    icon.addEventListener("click", () => {
+                        const colIndex = parseInt(icon.dataset.column);
+                        const type = icon.dataset.type;
+
+                        if (sortState.column === colIndex) {
+                            sortState.direction = (sortState.direction + 1) % 3;
+                        } else {
+                            sortState.column = colIndex;
+                            sortState.direction = 1;
+                        }
+
+                        // Resetear íconos
+                        icons.forEach(i => {
+                            i.className = "bi bi-arrow-down-up sort-icon";
+                            i.classList.remove("text-primary");
+                        });
+
+                        // Restaurar orden original
+                        if (sortState.direction === 0) {
+                            tableBody.innerHTML = originalHTML;
+                            return;
+                        }
+
+                        icon.classList.add("text-primary");
+                        icon.classList.remove("bi-arrow-down-up");
+                        icon.classList.add(sortState.direction === 1 ? "bi-arrow-down" : "bi-arrow-up");
+
+                        const rows = Array.from(tableBody.querySelectorAll("tr"));
+                        rows.sort((a, b) => {
+                            let aText = a.children[colIndex].innerText.trim();
+                            let bText = b.children[colIndex].innerText.trim();
+
+                            if (type === "number") {
+                                aText = parseInt(aText) || 0;
+                                bText = parseInt(bText) || 0;
+                            } else {
+                                aText = aText.toLowerCase();
+                                bText = bText.toLowerCase();
+                            }
+
+                            if (aText < bText) return sortState.direction === 1 ? -1 : 1;
+                            if (aText > bText) return sortState.direction === 1 ? 1 : -1;
+                            return 0;
+                        });
+
+                        tableBody.innerHTML = "";
+                        rows.forEach(row => tableBody.appendChild(row));
+                    });
+                });
+
+                // Guardar cambios del formulario editar usuario
                 $('#editUserForm').submit(function (e) {
                     e.preventDefault();
 
@@ -174,121 +299,11 @@
                         success: function () {
                             const row = $('button[data-idusuario="' + usuarioData.idUsuario + '"]').closest('tr');
                             row.find('th').text(usuarioData.nombre);
-                            bootstrap.Modal.getInstance(document.getElementById('editUserModal')).hide();
+                            editModalInstance.hide();
                         },
                         error: function () {
                             alert('Error al actualizar el usuario');
                         }
-                    });
-                });
-
-                $('.view-contracts-btn').click(function () {
-                    const idUsuario = $(this).data('idusuario');
-                    const nombreUsuario = $(this).data('nombre');
-
-                    $('#viewUserName').text(nombreUsuario); // Título del modal
-                    $('#contractsTableBody').empty(); // Limpiar tabla
-
-                    $.ajax({
-                        url: `http://localhost:8081/api/contratos/v1/por-usuario-id?id=${idUsuario}`,
-                        method: 'GET',
-                        success: function (response) {
-                            if (response.correct && response.objects && response.objects.length > 0) {
-                                response.objects.forEach((contrato, index) => {
-                                    const row = `
-                                                <tr>
-                                                    <td>${contrato.idContrato}</td>
-                                                    <td>${contrato.codigoContrato}</td>
-                                                    <td>${new Date(contrato.fecha).toLocaleDateString()}</td>
-                                                    <td>${contrato.zonaExtraccion?.nombreZona || 'N/A'}</td>
-                                                    <td>${contrato.zonaInyeccion?.nombreZona || 'N/A'}</td>
-                                                    <td>
-                                                        <a title="Ver contrato"
-                                                        class="btn btn-success btn-sm btn-action btn-lg mb-2 rounded-circle view-contracts-btn"
-                                                        href="/detalleContrato/${contrato.idContrato}">
-                                                        <i class="bi bi-eye"></i>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                            `;
-                                    $('#contractsTableBody').append(row);
-                                });
-                            } else {
-                                const emptyRow = `<tr><td colspan="5">No hay contratos registrados</td></tr>`;
-                                $('#contractsTableBody').append(emptyRow);
-                            }
-
-                            // Mostrar modal
-                            const modal = new bootstrap.Modal(document.getElementById('viewContractsModal'));
-                            modal.show();
-                        },
-                        error: function () {
-                            alert('Error al obtener contratos del usuario');
-                        }
-                    });
-                });
-
-            });
-
-            document.addEventListener("DOMContentLoaded", function () {
-                const sortIcons = document.querySelectorAll(".sort-icon");
-                const tableBody = document.getElementById("tbody-usuarios");
-                const originalRows = Array.from(tableBody.querySelectorAll("tr")); // Guardar orden original
-                let activeSort = { column: null, state: 0 }; // 0: sin ordenar, 1: asc, 2: desc
-
-                sortIcons.forEach(icon => {
-                    icon.addEventListener("click", () => {
-                        const columnIndex = parseInt(icon.dataset.column);
-                        const dataType = icon.dataset.type || "text";
-
-                        // Si es la misma columna, ciclo de estado 0→1→2→0
-                        if (activeSort.column === columnIndex) {
-                            activeSort.state = (activeSort.state + 1) % 3;
-                        } else {
-                            activeSort.column = columnIndex;
-                            activeSort.state = 1; // empieza con ascendente
-                        }
-
-                        // Limpiar íconos
-                        sortIcons.forEach(i => {
-                            i.className = "bi bi-arrow-down-up sort-icon";
-                            i.classList.remove("text-primary");
-                        });
-
-                        // Restaurar orden original si se resetea
-                        if (activeSort.state === 0) {
-                            originalRows.forEach(row => tableBody.appendChild(row.cloneNode(true)));
-                            return;
-                        }
-
-                        // Determinar orden
-                        const ascending = activeSort.state === 1;
-                        icon.classList.remove("bi-arrow-down-up");
-                        icon.classList.add(ascending ? "bi-arrow-down" : "bi-arrow-up");
-                        icon.classList.add("text-primary");
-
-                        // Ordenar filas actuales
-                        let rows = Array.from(tableBody.querySelectorAll("tr"));
-                        rows.sort((a, b) => {
-                            let aText = a.children[columnIndex].innerText.trim();
-                            let bText = b.children[columnIndex].innerText.trim();
-
-                            if (dataType === "number") {
-                                aText = parseInt(aText) || 0;
-                                bText = parseInt(bText) || 0;
-                            } else {
-                                aText = aText.toLowerCase();
-                                bText = bText.toLowerCase();
-                            }
-
-                            if (aText < bText) return ascending ? -1 : 1;
-                            if (aText > bText) return ascending ? 1 : -1;
-                            return 0;
-                        });
-
-                        // Reinsertar filas
-                        tableBody.innerHTML = "";
-                        rows.forEach(row => tableBody.appendChild(row));
                     });
                 });
             });
