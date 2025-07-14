@@ -28,8 +28,9 @@
                 <div class="col-md-6">
                     <div class="card shadow p-4 h-100">
                         <h4 class="mb-3">Contratos</h4>
-                        <div class="container">
-                            <button type="button" class="btn btn-outline-success btn-lg">
+                        <div class="container mb-3">
+                            <button type="button" id="btnAgregarContrato" class="btn btn-outline-success btn-lg"
+                                th:data-nombre="${usuario.nombre}">
                                 <i class="bi bi-plus-circle-dotted"></i> Agregar Contrato
                             </button>
                         </div>
@@ -42,64 +43,158 @@
                                         <th>Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody id="contractsTableBody">
-                                    <!-- Se llenará por AJAX -->
+                                <tbody>
+                                    <tr th:each="contrato : ${contratos}">
+                                        <th th:text="${contrato.codigoContrato}"></th>
+                                        <th th:text="${contrato.fecha}"></th>
+                                        <th>
+                                            <a title="Ver contrato" class="btn btn-success btn-sm rounded-circle"
+                                                th:href="@{/detalleContrato(codigo=${contrato.codigoContrato})}"
+                                                style="width: 3rem; height: 3rem;">
+                                                <i class="bi bi-eye fs-4"></i>
+                                            </a>
+                                        </th>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
                 </div>
+
+                <!-- Modal agregar nuevo contrato -->
+                <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
+                    aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <form id="addContractForm">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="addContractModalLabel">
+                                        <span class="text-success">Agregar Contrato para</span>
+                                        <span id="modalUserName" class="fw-bold"></span>
+                                    </h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body row g-3">
+                                    <input type="hidden" id="idUsuario" name="idUsuario">
+
+                                    <div class="col-md-6">
+                                        <label for="codigoContrato">Código Contrato</label>
+                                        <input type="text" class="form-control" id="codigoContrato"
+                                            name="codigoContrato" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="fecha">Fecha</label>
+                                        <input type="date" class="form-control" id="fecha" name="fecha" required>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="zonaExtraccion">Zona de Extracción</label>
+                                        <select class="form-select" id="zonaExtraccion" name="zonaExtraccion"
+                                            required></select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="zonaInyeccion">Zona de Inyección</label>
+                                        <select class="form-select" id="zonaInyeccion" name="zonaInyeccion"
+                                            required></select>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="submit" class="btn btn-primary">Guardar</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </section>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modalElement = document.getElementById('addContractModal');
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            const idUsuario = $('#usuarioContainer').data('id');
-            console.log("ID usuario:", idUsuario); // 👈 Verifica que sea 1 u otro número
+                if (!modalElement) return;
 
-            if (!idUsuario) {
-                console.warn("ID de usuario no encontrado");
-                return;
-            }
+                const addContractModalInstance = new bootstrap.Modal(modalElement);
 
-            $('#contractsTableBody').empty();
+                $(document).on('click', '#btnAgregarContrato', function () {
+                    $('#addContractForm')[0].reset();
 
-            $.ajax({
-                url: `http://localhost:8081/api/contratos/v1/por-usuario-id?id=${idUsuario}`,
-                method: 'GET',
-                success: function (response) {
-                    console.log("Respuesta API:", response); // 👈 Aquí debe mostrarse la respuesta
+                    const idUsuario = $('#usuarioContainer').data('id');
+                    const nombreUsuario = $(this).data('nombre');
 
-                    if (response.correct && response.objects && response.objects.length > 0) {
-                        response.objects.forEach((contrato) => {
-                            const row = `
-                            <tr>
-                                <td>${contrato.codigoContrato}</td>
-                                <td>${new Date(contrato.fecha).toLocaleDateString()}</td>
-                                <td>
-                                    <a title="Ver contrato"
-                                       class="btn btn-success btn-sm rounded-circle"
-                                       href="/detalleContrato?codigo=${encodeURIComponent(contrato.codigoContrato)}"
-                                       style="width: 3rem; height: 3rem;">
-                                        <i class="bi bi-eye fs-4"></i>
-                                    </a>
-                                </td>
-                            </tr>`;
-                            $('#contractsTableBody').append(row);
-                        });
-                    } else {
-                        $('#contractsTableBody').append('<tr><td colspan="3">No hay contratos registrados</td></tr>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Error al obtener contratos:", error); // 👈 Si hay error, saldrá aquí
-                    $('#contractsTableBody').append('<tr><td colspan="3">Error al cargar contratos</td></tr>');
+                    if (!idUsuario || !nombreUsuario) return;
+
+                    $('#idUsuario').val(idUsuario);
+                    $('#modalUserName').text(nombreUsuario);
+
+                    cargarZonas();
+                    addContractModalInstance.show();
+                });
+
+                function cargarZonas() {
+                    $('#zonaExtraccion').empty();
+                    $('#zonaInyeccion').empty();
+
+                    $.get('http://localhost:8081/api/zonas/v1/zonaextraccion', function (response) {
+                        if (response.correct && response.objects.length > 0) {
+                            response.objects.forEach(z => {
+                                $('#zonaExtraccion').append(`<option value="${z.nombreZona}">${z.nombreZona}</option>`);
+                            });
+                        } else {
+                            $('#zonaExtraccion').append('<option value="">Sin datos</option>');
+                        }
+                    });
+
+                    $.get('http://localhost:8081/api/zonas/v1/zonainyeccion', function (response) {
+                        if (response.correct && response.objects.length > 0) {
+                            response.objects.forEach(z => {
+                                $('#zonaInyeccion').append(`<option value="${z.nombreZona}">${z.nombreZona}</option>`);
+                            });
+                        } else {
+                            $('#zonaInyeccion').append('<option value="">Sin datos</option>');
+                        }
+                    });
                 }
+
+                $('#addContractForm').submit(function (e) {
+                    e.preventDefault();
+
+                    const contratoData = {
+                        codigoContrato: $('#codigoContrato').val(),
+                        fecha: $('#fecha').val(),
+                        zonaExtraccion: $('#zonaExtraccion').val(),
+                        zonaInyeccion: $('#zonaInyeccion').val(),
+                        usuario: {
+                            idUsuario: $('#idUsuario').val()
+                        }
+                    };
+
+                    $.ajax({
+                        url: 'http://localhost:8081/api/contratos/v1/add',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(contratoData),
+                        success: function (response) {
+                            if (response.correct) {
+                                location.reload();
+                            } else {
+                                alert('Error al agregar contrato: ' + (response.errorMessage || 'Error desconocido'));
+                            }
+                        },
+                        error: function () {
+                            alert('Error al comunicar con el servidor');
+                        }
+                    });
+                });
             });
-        });
-    </script>
+        </script>
+
+    </section>
 
 </body>
 

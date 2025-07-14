@@ -185,18 +185,27 @@ public class PaginaController {
     @GetMapping("/detalleUsuario")
     public String mostrarDetalleUsuario(@RequestParam("nombre") String nombre, Model model) {
         try {
-            ResponseEntity<Result<Usuario>> response = restTemplate.exchange(
+            ResponseEntity<Result<Usuario>> responseUsuario = restTemplate.exchange(
                     apiUsuarioUrl + "/por-nombre?nombre=" + nombre,
                     HttpMethod.GET,
                     HttpEntity.EMPTY,
                     new ParameterizedTypeReference<Result<Usuario>>() {
-
             });
 
-            Result<Usuario> resultUsuario = response.getBody();
+            Result<Usuario> resultUsuario = responseUsuario.getBody();
 
-            if (resultUsuario != null && resultUsuario.correct) {
+            ResponseEntity<Result<Contrato>> responseContrato = restTemplate.exchange(
+                    apiContratoUrl + "/por-usuario-nombre?nombre=" + nombre,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Contrato>>() {
+            });
+
+            Result<Contrato> resultContrato = responseContrato.getBody();
+
+            if (resultUsuario != null && resultUsuario.correct && resultContrato != null && resultContrato.correct) {
                 model.addAttribute("usuario", resultUsuario.object);
+                model.addAttribute("contratos", resultContrato.objects);
             } else {
                 model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
             }

@@ -1,5 +1,6 @@
 package com.BDI_TESTCliente.ML;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Date;
 
 public class Contrato {
@@ -8,6 +9,7 @@ public class Contrato {
 
     private String codigoContrato;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date fecha;
 
     private ZonaExtraccion zonaExtraccion;
