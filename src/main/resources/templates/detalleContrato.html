@@ -4,35 +4,89 @@
 
 <head>
     <title layout:fragment="title">Contrato</title>
+    <style>
+        .hover-effect-recepccion:hover {
+            background-color: var(--bs-primary);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+
+        .hover-effect-entrega:hover {
+            background-color: var(--bs-success);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+
+        .hover-effect-usuario:hover {
+            background-color: var(--bs-warning);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+    </style>
 </head>
 
 <body>
     <section layout:fragment="content">
-        <div class="container mt-4 mb-4">
+        <div class="container-fluid mt-4 mb-4">
             <h1 class="mb-4">Detalle del Contrato</h1>
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-            <div th:if="${contrato}" class="card shadow p-4">
-                <h4 th:text="'Código: ' + ${contrato.codigoContrato}"></h4>
-                <p><strong>Fecha:</strong> <span th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></span></p>
+            <div class="row">
+                <div class="col-md-6">
+                    <div th:if="${contrato}" class="card shadow p-4 h-100">
+                        <h4 th:text="'Código: ' + ${contrato.codigoContrato}"></h4>
+                        <p><strong>Fecha:</strong> <span
+                                th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></span></p>
 
-                <div class="mt-3">
-                    <h5 class="mb-2">Zona de Extracción</h5>
-                    <p><strong>ID:</strong> <span th:text="${contrato.zonaExtraccion.idZonaExtraccion}"></span></p>
-                    <p><strong>Nombre:</strong> <span th:text="${contrato.zonaExtraccion.nombreZona}"></span></p>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <a th:href="@{/detalleZona/{id}(id=${contrato.zonaInyeccion.idZonaInyeccion})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div
+                                        class="card h-100 shadow-sm border border-primary text-dark hover-effect-recepccion mt-3 rounded">
+                                        <div class="card-body">
+                                            <h5 class="mb-2 text-center">Zona de Inyección</h5>
+                                            <p><strong>Nombre:</strong> <span
+                                                    th:text="${contrato.zonaInyeccion.nombreZona}"></span></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a th:href="@{/detalleZona/{id}(id=${contrato.zonaExtraccion.idZonaExtraccion})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div
+                                        class="card h-100 shadow-sm border border-success text-dark hover-effect-entrega mt-3 rounded">
+                                        <div class="card-body">
+                                            <h5 class="mb-2 text-center">Zona de Extracción</h5>
+                                            <p><strong>Nombre:</strong> <span
+                                                    th:text="${contrato.zonaExtraccion.nombreZona}"></span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-md-4">
+                                <a th:href="@{/detalleUsuario(nombre=${contrato.usuario.nombre})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div
+                                        class="card h-100 shadow-sm border border-warning text-dark hover-effect-usuario mt-3 rounded">
+                                        <div class="card-body">
+                                            <h5 class="mb-2 text-center">Usuario</h5>
+                                            <p><strong>Nombre:</strong> <span
+                                                    th:text="${contrato.usuario.nombre}"></span></p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="mt-3">
-                    <h5 class="mb-2">Zona de Inyección</h5>
-                    <p><strong>ID:</strong> <span th:text="${contrato.zonaInyeccion.idZonaInyeccion}"></span></p>
-                    <p><strong>Nombre:</strong> <span th:text="${contrato.zonaInyeccion.nombreZona}"></span></p>
-                </div>
-
-                <div class="mt-3">
-                    <h5 class="mb-2">Usuario</h5>
-                    <p><strong>ID:</strong> <span th:text="${contrato.usuario.idUsuario}"></span></p>
-                    <p><strong>Nombre:</strong> <span th:text="${contrato.usuario.nombre}"></span></p>
+                <div class="col-md-6">
+                    <div class="card shadow p-4 h-100">
+                        Transacciones relacionadas con el contrato
+                    </div>
                 </div>
             </div>
         </div>

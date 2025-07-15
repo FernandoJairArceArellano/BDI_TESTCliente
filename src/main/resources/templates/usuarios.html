@@ -16,29 +16,19 @@
             </div>
 
             <div class="container mt-4 mb-4">
-                <a class="btn btn-primary btn-add" th:href="@{/Usuario/Form/0}">
-                    <!-- sec:authorize="hasAnyRole('PROGRAMADOR','Administrador')" -->
-                    <i class="bi bi-person-add"></i> Agregar usuario</a>
+                <button type="button" id="btnAgregarUsuario" class="btn btn-outline-success btn-lg">
+                    <i class="bi bi-person-add"></i> Agregar usuario
+                </button>
+                <!-- sec:authorize="hasAnyRole('PROGRAMADOR','Administrador')" -->
             </div>
 
-            <i class="bi bi-arrow-down-up"></i>
-            <i class="bi bi-arrow-down"></i>
-            <i class="bi bi-arrow-up"></i>
             <div class="table-responsive">
-                <table class="table table-hover table-bordered text-center fs-6 align-middle">
+                <table class="table table-hover table-bordered text-center fs-6 align-middle" id="usuarios">
                     <thead class="table-dark">
                         <tr>
-                            <th class="w-50">
-                                Nombre Empresa
-                                <i class="bi bi-arrow-down-up sort-icon" data-column="0" data-type="text"
-                                    title="Ordenar por nombre"></i>
-                            </th>
-                            <th class="w-25">
-                                Contratos Registrados
-                                <i class="bi bi-arrow-down-up sort-icon" data-column="1" data-type="number"
-                                    title="Ordenar por contratos"></i>
-                            </th>
-                            <th class="w-auto">Acciones</th>
+                            <th class="w-50">Nombre Empresa</th>
+                            <th class="w-25">Contratos Registrados</th>
+                            <th class="w-auto" data-dt-order="disable">Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-usuarios">
@@ -111,6 +101,36 @@
             </div>
         </div>
 
+        <!-- Modal agregar Usuario -->
+        <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <form id="addUserForm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addUserModalLabel">
+                                <span class="text-success">Agregar</span> nuevo <span
+                                    style="font-weight: bold;">Usuario</span>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+
+                        <div class="modal-body row g-3">
+                            <div class="col-md-12">
+                                <label>Nombre de la Empresa</label>
+                                <input type="text" class="form-control" id="nombreNuevo" name="nombre"
+                                    placeholder="Escribe el nombre de la empresa">
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-success">Guardar</button>
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Modal ver contratos -->
         <div class="modal fade" id="viewContractsModal" tabindex="-1" aria-labelledby="viewContractsModalLabel"
             aria-hidden="true">
@@ -148,6 +168,7 @@
             document.addEventListener("DOMContentLoaded", function () {
                 const editModalInstance = new bootstrap.Modal(document.getElementById('editUserModal'));
                 const viewContractsModalInstance = new bootstrap.Modal(document.getElementById('viewContractsModal'));
+                const addUserModalInstance = new bootstrap.Modal(document.getElementById('addUserModal'));
 
                 // Evento para el botón de editar
                 $('#tbody-usuarios').on('click', '.edit-btn', function () {
@@ -206,75 +227,26 @@
                     });
                 });
 
+                // Abrir modal agregar usuario
+                $('#btnAgregarUsuario').click(function () {
+                    $('#addUserForm')[0].reset();
+                    addUserModalInstance.show();
+                });
+
                 // Limpieza manual de backdrop (fallback |retroceder| si Bootstrap falla)
                 document.getElementById('editUserModal').addEventListener('hidden.bs.modal', () => {
                     document.body.classList.remove('modal-open');
                     $('.modal-backdrop').remove();
                 });
-                document.getElementById('viewContractsModal').addEventListener('hidden.bs.modal', () => {
+
+                document.getElementById('addUserModal').addEventListener('hidden.bs.modal', () => {
                     document.body.classList.remove('modal-open');
                     $('.modal-backdrop').remove();
                 });
 
-                // Guardar HTML original para restaurar la tabla
-                const icons = document.querySelectorAll(".sort-icon");
-                const tableBody = document.getElementById("tbody-usuarios");
-                const originalHTML = tableBody.innerHTML;
-
-                let sortState = {
-                    column: null,
-                    direction: 0 // 0: sin ordenar, 1: ascendente, 2: descendente
-                };
-
-                icons.forEach(icon => {
-                    icon.addEventListener("click", () => {
-                        const colIndex = parseInt(icon.dataset.column);
-                        const type = icon.dataset.type;
-
-                        if (sortState.column === colIndex) {
-                            sortState.direction = (sortState.direction + 1) % 3;
-                        } else {
-                            sortState.column = colIndex;
-                            sortState.direction = 1;
-                        }
-
-                        // Resetear íconos
-                        icons.forEach(i => {
-                            i.className = "bi bi-arrow-down-up sort-icon";
-                            i.classList.remove("text-primary");
-                        });
-
-                        // Restaurar orden original
-                        if (sortState.direction === 0) {
-                            tableBody.innerHTML = originalHTML;
-                            return;
-                        }
-
-                        icon.classList.add("text-primary");
-                        icon.classList.remove("bi-arrow-down-up");
-                        icon.classList.add(sortState.direction === 1 ? "bi-arrow-down" : "bi-arrow-up");
-
-                        const rows = Array.from(tableBody.querySelectorAll("tr"));
-                        rows.sort((a, b) => {
-                            let aText = a.children[colIndex].innerText.trim();
-                            let bText = b.children[colIndex].innerText.trim();
-
-                            if (type === "number") {
-                                aText = parseInt(aText) || 0;
-                                bText = parseInt(bText) || 0;
-                            } else {
-                                aText = aText.toLowerCase();
-                                bText = bText.toLowerCase();
-                            }
-
-                            if (aText < bText) return sortState.direction === 1 ? -1 : 1;
-                            if (aText > bText) return sortState.direction === 1 ? 1 : -1;
-                            return 0;
-                        });
-
-                        tableBody.innerHTML = "";
-                        rows.forEach(row => tableBody.appendChild(row));
-                    });
+                document.getElementById('viewContractsModal').addEventListener('hidden.bs.modal', () => {
+                    document.body.classList.remove('modal-open');
+                    $('.modal-backdrop').remove();
                 });
 
                 // Guardar cambios del formulario editar usuario
@@ -305,6 +277,77 @@
                             alert('Error al actualizar el usuario');
                         }
                     });
+                });
+
+                // Guardar nuevo usuario
+                $('#addUserForm').submit(function (e) {
+                    e.preventDefault();
+
+                    const nombreNuevo = $('#nombreNuevo').val().trim();
+
+                    if (!nombreNuevo) {
+                        alert("Por favor ingrese el nombre de la empresa");
+                        return;
+                    }
+
+                    const nuevoUsuario = { nombre: nombreNuevo };
+
+                    $.ajax({
+                        url: 'http://localhost:8081/api/usuario/v1/addUsuario',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(nuevoUsuario),
+                        success: function (response) {
+                            if (response.correct) {
+                                // Agregar el nuevo usuario directamente a la tabla sin recargar
+                                const newRow = `
+                                    <tr>
+                                        <th>${response.object.nombre}</th>
+                                        <td>Sin contratos registrados</td>
+                                        <td class="align-middle" data-label="Acciones">
+                                            <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                                <a href="/detalleUsuario?nombre=${encodeURIComponent(response.object.nombre)}"
+                                                    class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 3rem; height: 3rem;" title="Usuario">
+                                                    <i class="bi bi-person-circle fs-5"></i>
+                                                </a>
+
+                                                <button title="Editar datos"
+                                                    class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
+                                                    style="width: 3rem; height: 3rem;" data-idusuario="${response.object.idUsuario}"
+                                                    data-nombre="${response.object.nombre}">
+                                                    <i class="bi bi-pencil-square fs-5"></i>
+                                                </button>
+
+                                                <button title="Ver contratos"
+                                                    class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
+                                                    style="width: 3rem; height: 3rem;" data-idusuario="${response.object.idUsuario}"
+                                                    data-nombre="${response.object.nombre}">
+                                                    <i class="bi bi-person-lines-fill fs-5"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+
+                                $('#tbody-usuarios').append(newRow);
+                                addUserModalInstance.hide();
+                            } else {
+                                alert(response.errorMessage || "No se pudo agregar el usuario");
+                            }
+                        },
+                        error: function () {
+                            alert("Error al comunicar con el servidor");
+                        }
+                    });
+                });
+
+                new DataTable('#usuarios', {
+                    lengthMenu: [10, 25, 50, -1],
+                    scrollCollapse: true,
+                    scrollY: '50vh',
+                    paging: true,
+                    dom: '<"d-flex justify-content-between align-items-center mb-3"fB>rt<"d-flex justify-content-between align-items-center mt-3"lip>'
                 });
             });
         </script>

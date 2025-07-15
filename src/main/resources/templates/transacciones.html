@@ -4,41 +4,43 @@
 
 <head>
     <title layout:fragment="title">Transacciones</title>
-    <!-- DataTables CSS library -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.min.css" />
-
-    <!-- DataTables JS library -->
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
 </head>
 
 <body>
     <section layout:fragment="content">
-        <div class="container mt-4 mb-4 t-5">
-            <h1>Transacciones registradas</h1>
+        <div class="container-fluid mt-4 mb-4 t-5">
+            <h1>Transacciones registradas en el Sistema</h1>
             <div th:if="${error}">
                 <p th:text="${error}" style="color: red;"></p>
             </div>
             <div class="table-responsive">
-                <table class="table table-striped" id="myTable" cellspacing="0" width="100%">
-                    <thead>
+                <table class="table table-striped text-center align-middle" id="myTable" cellspacing="0" width="100%">
+                    <thead class="table-dark">
                         <tr>
-                            <th>Id Contrato</th>
-                            <th>Cantidad Asignada Entregada</th>
-                            <th>Cantidad Asignada Recepcion</th>
-                            <th>Cantidad Nominada Entregada</th>
-                            <th>Cantidad Nominada Recepcion</th>
-                            <th>Gas en Exceso</th>
-                            <th>Cargo Uso</th>
-                            <th>Cargo Gas en Exceso</th>
-                            <th>Tarifa Exceso Firme</th>
-                            <th>Tarifa Uso Interrumpible</th>
-                            <th>Total a Facturar</th>
-                            <th>Acciones</th>
+                            <th rowspan="2" class="text-center align-middle" width="10%" data-dt-order="disable">Id Transaccion</th>
+                            <th rowspan="2" class="text-center align-middle" width="10%">Codigo Contrato</th>
+                            <th colspan="4" class="text-center" data-dt-order="disable">Cantidades</th>
+                            <th colspan="3" class="text-center" data-dt-order="disable">Cargos</th>
+                            <th colspan="2" class="text-center" data-dt-order="disable">Tarifas</th>
+                            <th rowspan="2" class="text-center align-middle" width="10%">Total a Facturar</th>
+                            <th rowspan="2" class="text-center align-middle" width="10%" data-dt-order="disable">Acciones</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">Asignada Entregada</th>
+                            <th class="text-center">Asignada Recepcion</th>
+                            <th class="text-center">Nominada Entregada</th>
+                            <th class="text-center">Nominada Recepcion</th>
+                            <th class="text-center">Gas en Exceso</th>
+                            <th class="text-center">Uso</th>
+                            <th class="text-center">Gas en Exceso</th>
+                            <th class="text-center">Exceso Firme</th>
+                            <th class="text-center">Uso Interrumpible</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="transaccion : ${transacciones}">
-                            <th th:text="${transaccion.idOperacion}"></th>
+                            <td th:text="${transaccion.idOperacion}"></td>
+                            <td th:text="${transaccion.contrato.codigoContrato}"></td>
                             <td th:text="${transaccion.cantidadAsignadaEntregada}"></td>
                             <td th:text="${transaccion.cantidadAsignadaRecepcion}"></td>
                             <td th:text="${transaccion.cantidadNominadaEntregada}"></td>
@@ -64,10 +66,13 @@
 
         <script>
             new DataTable('#myTable', {
-                paging: true,
+                lengthMenu: [10, 25, 50, -1],
                 scrollCollapse: true,
-                scrollY: '50vh'
+                scrollY: '50vh',
+                paging: true,
+                dom: '<"d-flex justify-content-between align-items-center mb-3"fB>rt<"d-flex justify-content-between align-items-center mt-3"lip>',
             });
+
         </script>
 
     </section>

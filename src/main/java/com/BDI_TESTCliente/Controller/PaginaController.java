@@ -154,6 +154,11 @@ public class PaginaController {
 
         return "transacciones";
     }
+    
+    @GetMapping("/zonas")
+    public String mostrarZonas(Model model){
+        return "zonas";
+    }
 
     @GetMapping("/detalleContrato")
     public String obtenerContratoPorCodigo(@RequestParam("codigo") String codigoContrato, Model model) {
@@ -225,4 +230,5 @@ public class PaginaController {
         // Procesamiento lectura del archivo y guardarlo en un punto del sistema
         return null;
     }
+    
 }
