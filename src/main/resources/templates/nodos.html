@@ -29,7 +29,8 @@
 
 <body>
     <section layout:fragment="content">
-        <div class="container mt-4 mb-4 t-5 animate__animated animate__fadeInDown" style="position: relative; z-index: 1055;">
+        <div class="container mt-4 mb-4 t-5 animate__animated animate__fadeInDown"
+            style="position: relative; z-index: 1055;">
             <h2 class="form-label">Buscar Nodos Comerciales</h2>
             <div class="input-group input-group-lg mb-3">
                 <input id="searchInput" class="form-control" type="text" placeholder="Buscar por nombre o código"
@@ -55,7 +56,8 @@
 
             <div class="container">
                 <div class="row">
-                    <div class="col nodo-group scroll-area animate__animated animate__fadeInLeft" data-group="recepcion">
+                    <div class="col nodo-group scroll-area animate__animated animate__fadeInLeft"
+                        data-group="recepcion">
                         <h3 class="mb-3">Nodos de Recepción</h3>
                         <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${nodosRecepcion != null}">
                             <div class="col" th:each="nodo : ${nodosRecepcion}">
@@ -97,6 +99,16 @@
                     </div>
                 </div>
 
+                <div id="noResultsCard" class="w-100 d-none animate__animated animate__fadeIn">
+                    <div class="card text-center border-danger">
+                        <div class="card-body">
+                            <h4 class="card-title text-danger"><i class="bi bi-exclamation-triangle"></i> Sin
+                                coincidencias</h4>
+                            <p class="card-text">No se encontraron nodos comerciales con el criterio de búsqueda.</p>
+                        </div>
+                    </div>
+                </div>
+
                 <div th:if="${error != null}">
                     <div class="alert alert-danger" th:text="${error}">Error al cargar nodos</div>
                 </div>
@@ -122,9 +134,13 @@
             document.addEventListener("DOMContentLoaded", function () {
                 const input = document.getElementById("searchInput");
 
+                const noResultsCard = document.getElementById("noResultsCard");
+
                 input.addEventListener("keyup", function () {
                     const searchText = input.value.toLowerCase();
                     const groups = document.querySelectorAll(".nodo-group");
+
+                    let totalMatchFound = false; // Nuevo flag general
 
                     groups.forEach(group => {
                         let matchFound = false;
@@ -143,6 +159,7 @@
                                     animateCSS(col, 'animate__fadeIn');
                                 }
                                 matchFound = true;
+                                totalMatchFound = true; // Al menos un match global
                             } else {
                                 if (col.style.display !== 'none') {
                                     animateCSS(col, 'animate__fadeOut', () => {
@@ -165,7 +182,20 @@
                             }
                         }
                     });
+
+                    // Mostrar u ocultar mensaje de "Sin coincidencias"
+                    if (!totalMatchFound) {
+                        noResultsCard.classList.remove("d-none");
+                        animateCSS(noResultsCard, 'animate__fadeIn');
+                    } else {
+                        if (!noResultsCard.classList.contains("d-none")) {
+                            animateCSS(noResultsCard, 'animate__fadeOut', () => {
+                                noResultsCard.classList.add("d-none");
+                            });
+                        }
+                    }
                 });
+
 
                 document.querySelectorAll(".group-filter").forEach(item => {
                     item.addEventListener("click", function (e) {

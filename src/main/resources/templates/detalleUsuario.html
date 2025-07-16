@@ -336,6 +336,9 @@
 
                 // Inicializar DataTable
                 new DataTable('#contratos', {
+                    columnDefs: [
+                        { targets: "_all", className: "text-center align-middle" }
+                    ],
                     lengthMenu: [10, 25, 50, -1],
                     paging: true,
                     scrollCollapse: true,

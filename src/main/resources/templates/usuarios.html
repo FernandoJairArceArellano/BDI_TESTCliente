@@ -7,7 +7,7 @@
 </head>
 
 <body>
-    <section layout:fragment="content">
+    <main layout:fragment="content">
         <div class="container mt-4 mb-4 t-5">
             <h1>Usuarios</h1>
 
@@ -24,7 +24,7 @@
 
             <div class="table-responsive">
                 <table class="table table-hover table-bordered text-center fs-6 align-middle" id="usuarios">
-                    <thead class="table-dark">
+                    <thead class="table-dark text-center align-middle">
                         <tr>
                             <th class="w-50">Nombre Empresa</th>
                             <th class="w-25">Contratos Registrados</th>
@@ -33,12 +33,12 @@
                     </thead>
                     <tbody id="tbody-usuarios">
                         <tr th:each="usuario : ${usuarios}">
-                            <th th:text="${usuario.nombre}"></th>
-                            <td>
+                            <th class="align-middle text-center" th:text="${usuario.nombre}"></th>
+                            <td class="align-middle text-center">
                                 <span
                                     th:text="${contratosPorUsuario[usuario.idUsuario] != null ? contratosPorUsuario[usuario.idUsuario] : '0'}"></span>
                             </td>
-                            <td class="align-middle" data-label="Acciones">
+                            <td class="align-middle text-center" data-label="Acciones">
                                 <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
                                     <a th:href="@{/detalleUsuario(nombre=${usuario.nombre})}"
                                         class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
@@ -261,8 +261,11 @@
                 // Abrir modal agregar usuario
                 $('#btnAgregarUsuario').click(function () {
                     $('#addUserForm')[0].reset();
+                    const modalContent = $('#addUserModal .modal-dialog');
+                    modalContent.removeClass('animate__fadeOutRight').addClass('animate__animated animate__fadeInLeft');
                     addUserModalInstance.show();
                 });
+
 
                 // Limpieza manual de backdrop
                 ['editUserModal', 'addUserModal', 'viewContractsModal'].forEach(id => {
@@ -271,6 +274,12 @@
                         $('.modal-backdrop').remove();
                     });
                 });
+
+                $('#addUserModal').on('hidden.bs.modal', function () {
+                    const modalContent = $('#addUserModal .modal-dialog');
+                    modalContent.removeClass('animate__animated animate__fadeInLeft animate__fadeOutRight');
+                });
+
 
                 // Guardar cambios del formulario editar usuario
                 $('#editUserForm').submit(function (e) {
@@ -325,42 +334,51 @@
                                 const nuevoUsuario = response.object;
 
                                 const rowHtml = `
-                            <tr>
-                                <th>${nuevoUsuario.nombre}</th>
-                                <td>0</td>
-                                <td class="align-middle">
-                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
-                                        <a href="/detalleUsuario?nombre=${encodeURIComponent(nuevoUsuario.nombre)}"
-                                            class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
-                                            style="width: 3rem; height: 3rem;" title="Usuario">
-                                            <i class="bi bi-person-circle fs-5"></i>
-                                        </a>
+                                    <tr>
+                                        <th>${nuevoUsuario.nombre}</th>
+                                        <td>0</td>
+                                        <td class="align-middle">
+                                            <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                                <a href="/detalleUsuario?nombre=${encodeURIComponent(nuevoUsuario.nombre)}"
+                                                    class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                                    style="width: 3rem; height: 3rem;" title="Usuario">
+                                                    <i class="bi bi-person-circle fs-5"></i>
+                                                </a>
 
-                                        <button title="Editar datos"
-                                            class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
-                                            style="width: 3rem; height: 3rem;"
-                                            data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
-                                            <i class="bi bi-pencil-square fs-5"></i>
-                                        </button>
+                                                <button title="Editar datos"
+                                                    class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
+                                                    style="width: 3rem; height: 3rem;"
+                                                    data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
+                                                    <i class="bi bi-pencil-square fs-5"></i>
+                                                </button>
 
-                                        <button title="Ver contratos"
-                                            class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
-                                            style="width: 3rem; height: 3rem;"
-                                            data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
-                                            <i class="bi bi-person-lines-fill fs-5"></i>
-                                        </button>
-                                        <button type="button" class="btn btn-danger btn-sm rounded-circle delete-usuario"
-                                            th:data-id="${usuario.idUsuario}" style="width: 3rem; height: 3rem;"
-                                            title="Borrar Usuario">
-                                            <i class="bi bi-trash fs-4"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
+                                                <button title="Ver contratos"
+                                                    class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
+                                                    style="width: 3rem; height: 3rem;"
+                                                    data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
+                                                    <i class="bi bi-person-lines-fill fs-5"></i>
+                                                </button>
+
+                                                <button type="button" class="btn btn-danger btn-sm rounded-circle delete-usuario"
+                                                    data-id="${nuevoUsuario.idUsuario}" style="width: 3rem; height: 3rem;"
+                                                    title="Borrar Usuario">
+                                                    <i class="bi bi-trash fs-4"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>`;
 
                                 $('#tbody-usuarios').append(rowHtml);
-                                addUserModalInstance.hide();
+
+                                // Animación de cierre del modal agregar usuario
+                                const modalContent = $('#addUserModal .modal-dialog');
+                                modalContent.removeClass('animate__fadeInLeft').addClass('animate__animated animate__fadeOutRight');
+
+                                modalContent.one('animationend', function () {
+                                    addUserModalInstance.hide();
+                                    modalContent.removeClass('animate__animated animate__fadeOutRight');
+                                });
+
                             } else {
                                 alert(response.errorMessage || "No se pudo agregar el usuario");
                             }
@@ -370,6 +388,7 @@
                         }
                     });
                 });
+
 
                 // Función SweetAlert personalizada
                 function mostrarSweetMensaje(tipo, mensaje, gif = null, width = 300, height = 200, tiempo = 2500) {
@@ -437,6 +456,9 @@
 
                 // DataTable configuración
                 new DataTable('#usuarios', {
+                    columnDefs: [
+                        { targets: "_all", className: "text-center align-middle" }
+                    ],
                     lengthMenu: [10, 25, 50, -1],
                     scrollCollapse: true,
                     scrollY: '50vh',
@@ -446,7 +468,7 @@
             });
         </script>
 
-    </section>
+    </main>
 </body>
 
 </html>

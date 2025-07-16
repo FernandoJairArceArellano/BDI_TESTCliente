@@ -14,7 +14,8 @@
                 <p th:text="${error}" style="color: red;"></p>
             </div>
             <div class="table-responsive">
-                <table class="table table-striped text-center align-middle" id="tablaTransacciones" cellspacing="0" width="100%">
+                <table class="table table-striped text-center align-middle" id="tablaTransacciones" cellspacing="0"
+                    width="100%">
                     <thead class="table-dark">
                         <tr>
                             <th class="text-center align-middle" data-dt-order="disable">Operacion</th>
@@ -64,6 +65,9 @@
         <script>
             $(document).ready(function () {
                 new DataTable('#tablaTransacciones', {
+                    columnDefs: [
+                        { targets: "_all", className: "text-center align-middle" }
+                    ],
                     lengthMenu: [10, 25, 50, -1],
                     scrollCollapse: true,
                     scrollY: '50vh',
