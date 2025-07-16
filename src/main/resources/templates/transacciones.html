@@ -7,40 +7,37 @@
 </head>
 
 <body>
-    <section layout:fragment="content">
+    <main layout:fragment="content">
         <div class="container-fluid mt-4 mb-4 t-5">
             <h1>Transacciones registradas en el Sistema</h1>
             <div th:if="${error}">
                 <p th:text="${error}" style="color: red;"></p>
             </div>
             <div class="table-responsive">
-                <table class="table table-striped text-center align-middle" id="myTable" cellspacing="0" width="100%">
+                <table class="table table-striped text-center align-middle" id="tablaTransacciones" cellspacing="0" width="100%">
                     <thead class="table-dark">
                         <tr>
-                            <th rowspan="2" class="text-center align-middle" width="10%" data-dt-order="disable">Id Transaccion</th>
-                            <th rowspan="2" class="text-center align-middle" width="10%">Codigo Contrato</th>
-                            <th colspan="4" class="text-center" data-dt-order="disable">Cantidades</th>
-                            <th colspan="3" class="text-center" data-dt-order="disable">Cargos</th>
-                            <th colspan="2" class="text-center" data-dt-order="disable">Tarifas</th>
-                            <th rowspan="2" class="text-center align-middle" width="10%">Total a Facturar</th>
-                            <th rowspan="2" class="text-center align-middle" width="10%" data-dt-order="disable">Acciones</th>
-                        </tr>
-                        <tr>
-                            <th class="text-center">Asignada Entregada</th>
-                            <th class="text-center">Asignada Recepcion</th>
-                            <th class="text-center">Nominada Entregada</th>
-                            <th class="text-center">Nominada Recepcion</th>
+                            <th class="text-center align-middle" data-dt-order="disable">Operacion</th>
+                            <th class="text-center align-middle">Codigo Contrato</th>
+                            <th class="text-center">Cantidad Asignada Entregada</th>
+                            <th class="text-center">Cantidad Asignada Recepcion</th>
+                            <th class="text-center">Cantidad Nominada Entregada</th>
+                            <th class="text-center">Cantidad Nominada Recepcion</th>
                             <th class="text-center">Gas en Exceso</th>
-                            <th class="text-center">Uso</th>
-                            <th class="text-center">Gas en Exceso</th>
+                            <th class="text-center">Cargo Gas en Exceso</th>
+                            <th class="text-center">Cargo Uso</th>
                             <th class="text-center">Exceso Firme</th>
                             <th class="text-center">Uso Interrumpible</th>
+                            <th class="text-center align-middle">Total a Facturar</th>
+                            <th class="text-center align-middle" data-dt-order="disable">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr th:each="transaccion : ${transacciones}">
                             <td th:text="${transaccion.idOperacion}"></td>
-                            <td th:text="${transaccion.contrato.codigoContrato}"></td>
+                            <td
+                                th:text="${transaccion.contrato != null && transaccion.contrato.codigoContrato != null ? transaccion.contrato.codigoContrato : 'SIN CONTRATO'}">
+                            </td>
                             <td th:text="${transaccion.cantidadAsignadaEntregada}"></td>
                             <td th:text="${transaccion.cantidadAsignadaRecepcion}"></td>
                             <td th:text="${transaccion.cantidadNominadaEntregada}"></td>
@@ -65,17 +62,18 @@
         </div>
 
         <script>
-            new DataTable('#myTable', {
-                lengthMenu: [10, 25, 50, -1],
-                scrollCollapse: true,
-                scrollY: '50vh',
-                paging: true,
-                dom: '<"d-flex justify-content-between align-items-center mb-3"fB>rt<"d-flex justify-content-between align-items-center mt-3"lip>',
+            $(document).ready(function () {
+                new DataTable('#tablaTransacciones', {
+                    lengthMenu: [10, 25, 50, -1],
+                    scrollCollapse: true,
+                    scrollY: '50vh',
+                    paging: true,
+                    dom: '<"d-flex justify-content-between align-items-center mb-3"fB>rt<"d-flex justify-content-between align-items-center mt-3"lip>'
+                });
             });
-
         </script>
 
-    </section>
+    </main>
 </body>
 
 </html>

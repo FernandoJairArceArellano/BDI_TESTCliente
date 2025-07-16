@@ -29,7 +29,7 @@
 
 <body>
     <section layout:fragment="content">
-        <div class="container mt-4 mb-4 t-5">
+        <div class="container mt-4 mb-4 t-5 animate__animated animate__fadeInDown" style="position: relative; z-index: 1055;">
             <h2 class="form-label">Buscar Nodos Comerciales</h2>
             <div class="input-group input-group-lg mb-3">
                 <input id="searchInput" class="form-control" type="text" placeholder="Buscar por nombre o código"
@@ -55,8 +55,7 @@
 
             <div class="container">
                 <div class="row">
-
-                    <div class="col nodo-group scroll-area" data-group="recepcion">
+                    <div class="col nodo-group scroll-area animate__animated animate__fadeInLeft" data-group="recepcion">
                         <h3 class="mb-3">Nodos de Recepción</h3>
                         <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${nodosRecepcion != null}">
                             <div class="col" th:each="nodo : ${nodosRecepcion}">
@@ -75,7 +74,7 @@
                         </div>
                     </div>
 
-                    <div class="col nodo-group scroll-area" data-group="entrega">
+                    <div class="col nodo-group scroll-area animate__animated animate__fadeInRight" data-group="entrega">
                         <h3 class="mb-3">Nodos de Entrega</h3>
 
                         <div class="row row-cols-1 row-cols-md-3 g-3" th:if="${nodosEntrega != null}">
@@ -102,9 +101,24 @@
                     <div class="alert alert-danger" th:text="${error}">Error al cargar nodos</div>
                 </div>
             </div>
-
         </div>
+
         <script>
+            function animateCSS(element, animationName, callback) {
+                // Remueve solo las animaciones temporales de filtro, no las iniciales
+                element.classList.remove('animate__fadeIn', 'animate__fadeOut');
+
+                element.classList.add('animate__animated', animationName);
+
+                function handleAnimationEnd() {
+                    element.classList.remove('animate__animated', animationName);
+                    element.removeEventListener('animationend', handleAnimationEnd);
+                    if (callback) callback();
+                }
+
+                element.addEventListener('animationend', handleAnimationEnd);
+            }
+
             document.addEventListener("DOMContentLoaded", function () {
                 const input = document.getElementById("searchInput");
 
@@ -120,32 +134,64 @@
                             const codigo = card.getAttribute("data-codigo").toLowerCase();
                             const nombre = card.getAttribute("data-nombre").toLowerCase();
 
+                            const col = card.closest('.col');
                             const visible = searchText === "" || codigo.includes(searchText) || nombre.includes(searchText);
 
-                            card.closest('.col').style.display = visible ? "block" : "none";
-                            if (visible) matchFound = true;
+                            if (visible) {
+                                if (col.style.display === 'none' || col.style.display === '') {
+                                    col.style.display = "block";
+                                    animateCSS(col, 'animate__fadeIn');
+                                }
+                                matchFound = true;
+                            } else {
+                                if (col.style.display !== 'none') {
+                                    animateCSS(col, 'animate__fadeOut', () => {
+                                        col.style.display = "none";
+                                    });
+                                }
+                            }
                         });
 
-                        group.style.display = matchFound ? "block" : "none";
+                        if (matchFound) {
+                            if (group.style.display === 'none' || group.style.display === '') {
+                                group.style.display = "block";
+                                animateCSS(group, 'animate__fadeIn');
+                            }
+                        } else {
+                            if (group.style.display !== 'none') {
+                                animateCSS(group, 'animate__fadeOut', () => {
+                                    group.style.display = "none";
+                                });
+                            }
+                        }
                     });
                 });
-            });
 
-            document.querySelectorAll(".group-filter").forEach(item => {
-                item.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    const grupoSeleccionado = this.getAttribute("data-group");
+                document.querySelectorAll(".group-filter").forEach(item => {
+                    item.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const grupoSeleccionado = this.getAttribute("data-group");
 
-                    document.querySelectorAll(".nodo-group").forEach(group => {
-                        const groupType = group.getAttribute("data-group");
+                        document.querySelectorAll(".nodo-group").forEach(group => {
+                            const groupType = group.getAttribute("data-group");
 
-                        // Mostrar todos si es 'all', o el grupo coincidente
-                        group.style.display = (grupoSeleccionado === "all" || groupType === grupoSeleccionado) ? "block" : "none";
+                            if (grupoSeleccionado === "all" || groupType === grupoSeleccionado) {
+                                if (group.style.display === 'none' || group.style.display === '') {
+                                    group.style.display = "block";
+                                    animateCSS(group, 'animate__fadeIn');
+                                }
+                            } else {
+                                if (group.style.display !== 'none') {
+                                    animateCSS(group, 'animate__fadeOut', () => {
+                                        group.style.display = "none";
+                                    });
+                                }
+                            }
+                        });
                     });
                 });
             });
         </script>
-
 
     </section>
 </body>
