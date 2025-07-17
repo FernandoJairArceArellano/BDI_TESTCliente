@@ -61,7 +61,7 @@
                         <h3 class="mb-3">Nodos de Recepción</h3>
                         <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${nodosRecepcion != null}">
                             <div class="col" th:each="nodo : ${nodosRecepcion}">
-                                <a th:href="@{/detalleNodoComercial/{id}(id=${nodo.idNodoRecepccion})}"
+                                <a th:href="@{/detalleNodoComercial(nombreNodoComercial=${nodo.nombreNodoComercial})}"
                                     class="text-decoration-none text-reset d-block h-100">
                                     <div class="card h-100 shadow-sm border border-primary text-dark hover-effect-recepccion nodo-card"
                                         th:attr="data-codigo=${nodo.codigoNodo}"
@@ -81,7 +81,7 @@
 
                         <div class="row row-cols-1 row-cols-md-3 g-3" th:if="${nodosEntrega != null}">
                             <div class="col" th:each="nodo : ${nodosEntrega}">
-                                <a th:href="@{/detalleNodoComercial/{id}(id=${nodo.idNodoEntrega})}"
+                                <a th:href="@{/detalleNodoComercial(nombreNodoComercial=${nodo.nombreNodoComercial})}"
                                     class="text-decoration-none text-reset d-block h-100">
                                     <div class="card h-100 shadow-sm border border-success text-dark hover-effect-entrega nodo-card"
                                         th:attr="data-codigo=${nodo.codigoNodo}"
@@ -89,7 +89,6 @@
                                         <div class="card-body">
                                             <h5 class="card-title fw-bold " th:text="${nodo.codigoNodo}">Código nodo
                                             </h5>
-                                            <!-- <h6 class="card-subtitle mb-2 text-muted" th:text="'ID: ' + ${nodo.idNodoEntrega}">ID</h6> -->
                                             <p class="card-text" th:text="${nodo.nombreNodoComercial}">Nombre nodo</p>
                                         </div>
                                     </div>

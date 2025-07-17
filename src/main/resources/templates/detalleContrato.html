@@ -35,13 +35,19 @@
             <div class="row">
                 <div class="col-md-6">
                     <div th:if="${contrato}" class="card shadow p-4 h-100">
-                        <h4 th:text="'Código: ' + ${contrato.codigoContrato}"></h4>
-                        <p><strong>Fecha:</strong> <span
-                                th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></span></p>
-
+                        <div class="row">
+                            <div class="col">
+                                <h4 th:text="'Código: ' + ${contrato.codigoContrato}" class="fw-bold"></h4>
+                            </div>
+                            <div class="col">
+                                <p><strong>Fecha:</strong> <span
+                                        th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></span></p>
+                            </div>
+                        </div>
+                        <hr class="hr" />
                         <div class="row">
                             <div class="col-md-4">
-                                <a th:href="@{/detalleZona/{id}(id=${contrato.zonaInyeccion.idZonaInyeccion})}"
+                                <a th:href="@{/detalleZonaInyeccion(nombreZona=${contrato.zonaInyeccion.nombreZona})}"
                                     class="text-decoration-none text-reset d-block h-100">
                                     <div
                                         class="card h-100 shadow-sm border border-primary text-dark hover-effect-recepccion mt-3 rounded">
@@ -54,7 +60,7 @@
                                 </a>
                             </div>
                             <div class="col-md-4">
-                                <a th:href="@{/detalleZona/{id}(id=${contrato.zonaExtraccion.idZonaExtraccion})}"
+                                <a th:href="@{/detalleZonaExtraccion(nombreZona=${contrato.zonaExtraccion.nombreZona})}"
                                     class="text-decoration-none text-reset d-block h-100">
                                     <div
                                         class="card h-100 shadow-sm border border-success text-dark hover-effect-entrega mt-3 rounded">
@@ -84,12 +90,65 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="card shadow p-4 h-100">
-                        Transacciones relacionadas con el contrato
+                    <div th:if="${contrato}" class="card shadow p-4 h-100">
+                        <h4 class="mb-3 text-center fw-bold">Transacciones relacionadas con el contrato</h4>
+
+                        <div id="alertContainer" class="mt-3"></div>
+
+                        <div class="container mb-3">
+                            <button type="button" id="btnAgregarTransaccion" class="btn btn-outline-success btn-lg"
+                                th:data-id-contrato="${contrato.idContrato}">
+                                <i class="bi bi-plus-circle-dotted"></i> Agregar transaccion
+                            </button>
+                        </div>
+
+                        <div class="container">
+                            <table class="table table-bordered text-center align-middle" id="transacciones">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th class="w-50">Contrato #</th>
+                                        <th class="w-25">Total a Facturar</th>
+                                        <th class="w-25" data-dt-order="disable">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="transaccion : ${transacciones}">
+                                        <th th:text="${transaccion.idOperacion}"></th>
+                                        <th th:text="${transaccion.totalAFacturar}"></th>
+                                        <th>
+                                            <a class="btn btn-success btn-sm rounded-circle"
+                                                th:href="@{/detalleTransaccion(idOperacion=${transaccion.idOperacion})}"
+                                                style="width: 3rem; height: 3rem;" title="Ver transaccion">
+                                                <i class="bi bi-eye fs-4"></i>
+                                            </a>
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm rounded-circle delete-transaccion"
+                                                th:data-id="${transaccion.idOperacion}"
+                                                style="width: 3rem; height: 3rem;" title="Borrar transaccion">
+                                                <i class="bi bi-trash fs-4"></i>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                new DataTable('#transacciones', {
+                    columnDefs: [
+                        { targets: "_all", className: "text-center align-middle" }
+                    ],
+                    lengthMenu: [25, 50, 75, -1],
+                    paging: true,
+                    scrollCollapse: true,
+                    scrollY: '50vh'
+                });
+            });
+        </script>
     </section>
 </body>
 

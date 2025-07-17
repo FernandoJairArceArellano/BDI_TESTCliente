@@ -15,47 +15,51 @@
                 <p th:text="${error}" style="color: red;"></p>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered text-center fs-6 align-middle" id="contratos">
-                    <thead class="table-dark">
-                        <tr>
-                            <th style="display: grap;">ID Contrato </th>
-                            <th>Código Contrato</th>
-                            <th>Fecha</th>
-                            <th>Zona Extracción</th>
-                            <th>Zona Inyección</th>
-                            <th data-dt-order="disable">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-contratos">
-                        <tr th:each="contrato : ${contratos}">
-                            <td th:text="${contrato.idContrato}" style="display: grap;"></td>
-                            <td th:text="${contrato.codigoContrato}"></td>
-                            <td th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></td>
-                            <td
-                                th:text="${contrato.zonaExtraccion?.nombreZona != null ? contrato.zonaExtraccion.nombreZona : 'N/A'}">
-                            </td>
-                            <td
-                                th:text="${contrato.zonaInyeccion?.nombreZona != null ? contrato.zonaInyeccion.nombreZona : 'N/A'}">
-                            </td>
-                            <td class="align-middle" data-label="Acciones">
-                                <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
-                                    <a th:href="@{/detalleContrato(codigo=${contrato.codigoContrato})}"
-                                        class="btn btn-success btn-md rounded-circle" style="width: 3rem; height: 3rem;"
-                                        title="Ver Detalle">
-                                        <i class="bi bi-eye fs-5"></i>
-                                    </a>
-                                    <a th:href="@{/detalleUsuario(nombre=${contrato.usuario.nombre})}"
-                                        class="btn btn-primary btn-md rounded-circle" style="width: 3rem; height: 3rem;"
-                                        title="Usuario">
-                                        <i class="bi bi-person-circle fs-5"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div th:if="${contratos}" class="card shadow p-5 h-100">
+
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-center fs-6 align-middle" id="contratos">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="display: grap;">ID Contrato </th>
+                                <th>Código Contrato</th>
+                                <th>Fecha</th>
+                                <th>Zona Extracción</th>
+                                <th>Zona Inyección</th>
+                                <th data-dt-order="disable">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-contratos">
+                            <tr th:each="contrato : ${contratos}">
+                                <td th:text="${contrato.idContrato}" style="display: grap;"></td>
+                                <td th:text="${contrato.codigoContrato}"></td>
+                                <td th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></td>
+                                <td
+                                    th:text="${contrato.zonaExtraccion?.nombreZona != null ? contrato.zonaExtraccion.nombreZona : 'N/A'}">
+                                </td>
+                                <td
+                                    th:text="${contrato.zonaInyeccion?.nombreZona != null ? contrato.zonaInyeccion.nombreZona : 'N/A'}">
+                                </td>
+                                <td class="align-middle" data-label="Acciones">
+                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                        <a th:href="@{/detalleContrato(idContrato=${contrato.idContrato})}"
+                                            class="btn btn-success btn-md rounded-circle"
+                                            style="width: 3rem; height: 3rem;" title="Ver Detalle">
+                                            <i class="bi bi-eye fs-5"></i>
+                                        </a>
+                                        <a th:href="@{/detalleUsuario(nombre=${contrato.usuario.nombre})}"
+                                            class="btn btn-primary btn-md rounded-circle"
+                                            style="width: 3rem; height: 3rem;" title="Usuario">
+                                            <i class="bi bi-person-circle fs-5"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
 
         <script>
@@ -65,7 +69,7 @@
                     columnDefs: [
                         { targets: "_all", className: "text-center align-middle" }
                     ],
-                    lengthMenu: [10, 25, 50, -1],
+                    lengthMenu: [25, 50, 75, -1],
                     scrollCollapse: true,
                     scrollY: '50vh',
                     paging: true,

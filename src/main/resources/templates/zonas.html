@@ -1,22 +1,242 @@
+hover-effect-inyeccion
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultra.net.nz/thyemeleaf/layout"
     layout:decorate="~{layout}">
 
 <head>
-    <title layout:fragment="title">Zonas</title>
+    <title layout:fragment="title">Zonas de Transacción</title>
+    <style>
+        .hover-effect-inyeccion:hover {
+            background-color: var(--bs-primary);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+
+        .hover-effect-extraccion:hover {
+            background-color: var(--bs-success);
+            color: white !important;
+            transition: 0.2s ease-in-out;
+        }
+
+        .scroll-area {
+            height: 80vh;
+            /* ajusta según lo que necesites */
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+    </style>
+
 </head>
 
 <body>
     <section layout:fragment="content">
-        <div class="container mt-4 mb-4 t-5">
-            <h1>Mensaje de Bienvenida</h1>
-            <div th:if="${error}">
-                <p th:text="${error}" style="color: red;"></p>
-            </div>
-            <div class="table-responsive">
-
+        <div class="container mt-4 mb-4 t-5 animate__animated animate__fadeInDown"
+            style="position: relative; z-index: 1055;">
+            <h2 class="form-label">Buscar Zonas de Transacción</h2>
+            <div class="input-group input-group-lg mb-3">
+                <input id="searchInput" class="form-control" type="text" placeholder="Buscar por nombre de la Zona o ID"
+                    aria-label="Search">
+                <span class="input-group-text text-dark-emphasis"><i class="bi bi-search"></i></span>
+                <div class="btn-group ms-2">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Filtrar grupo
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item group-filter" href="#" data-group="all">Todos</a></li>
+                        <li><a class="dropdown-item group-filter" href="#" data-group="inyeccion">Zona de Inyección</a>
+                        </li>
+                        <li><a class="dropdown-item group-filter" href="#" data-group="extraccion">Zona de
+                                Extracción</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
+
+        <div class="container mt-4 mb-4 t-5">
+
+            <div class="container">
+                <div class="row">
+                    <div class="col zona-group scroll-area animate__animated animate__fadeInLeft"
+                        data-group="inyeccion">
+                        <h3 class="mb-3">Zonas de Inyección</h3>
+                        <div class="row row-cols-1 row-cols-md-3 g-3 mb-5" th:if="${zonasInyeccion != null}">
+                            <div class="col" th:each="zona : ${zonasInyeccion}">
+                                <a th:href="@{/detalleZonaInyeccion(nombreZona=${zona.nombreZona})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div class="card h-100 shadow-sm border border-primary text-dark hover-effect-inyeccion zona-card"
+                                        th:attr="data-idzona=${zona.idZonaInyeccion}"
+                                        th:attrappend="data-nombre=${zona.nombreZona}">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold" th:text="${zona.nombreZona}">Nombre Zona</h5>
+                                            <div class="row">
+                                                <div class="col-auto">
+                                                    ID:
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <p class="card-text" th:text="${zona.idZonaInyeccion}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col zona-group scroll-area animate__animated animate__fadeInRight"
+                        data-group="extraccion">
+                        <h3 class="mb-3">Zonas de extracción</h3>
+
+                        <div class="row row-cols-1 row-cols-md-3 g-3" th:if="${zonasExtraccion != null}">
+                            <div class="col" th:each="zona : ${zonasExtraccion}">
+                                <a th:href="@{/detalleZonaExtraccion(nombreZona=${zona.nombreZona})}"
+                                    class="text-decoration-none text-reset d-block h-100">
+                                    <div class="card h-100 shadow-sm border border-success text-dark hover-effect-extraccion zona-card"
+                                        th:attr="data-idzona=${zona.idZonaExtraccion}"
+                                        th:attrappend="data-nombre=${zona.nombreZona}">
+                                        <div class="card-body">
+                                            <h5 class="card-title fw-bold" th:text="${zona.nombreZona}">Nombre Zona</h5>
+                                            <div class="row">
+                                                <div class="col-auto">
+                                                    ID:
+                                                </div>
+                                                <div class="col-md-9">
+                                                    <p class="card-text" th:text="${zona.idZonaExtraccion}"></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="noResultsCard" class="w-100 d-none animate__animated animate__fadeIn">
+                    <div class="card text-center border-danger">
+                        <div class="card-body">
+                            <h4 class="card-title text-danger"><i class="bi bi-exclamation-triangle"></i> Sin
+                                coincidencias</h4>
+                            <p class="card-text">No se encontraron nodos comerciales con el criterio de búsqueda.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${error != null}">
+                    <div class="alert alert-danger" th:text="${error}">Error al cargar nodos</div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function animateCSS(element, animationName, callback) {
+                // Remueve solo las animaciones temporales de filtro, no las iniciales
+                element.classList.remove('animate__fadeIn', 'animate__fadeOut');
+
+                element.classList.add('animate__animated', animationName);
+
+                function handleAnimationEnd() {
+                    element.classList.remove('animate__animated', animationName);
+                    element.removeEventListener('animationend', handleAnimationEnd);
+                    if (callback) callback();
+                }
+
+                element.addEventListener('animationend', handleAnimationEnd);
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const input = document.getElementById("searchInput");
+
+                const noResultsCard = document.getElementById("noResultsCard");
+
+                input.addEventListener("keyup", function () {
+                    const searchText = input.value.toLowerCase();
+                    const groups = document.querySelectorAll(".zona-group");
+
+                    let totalMatchFound = false; // Nuevo flag general
+
+                    groups.forEach(group => {
+                        let matchFound = false;
+                        const cards = group.querySelectorAll(".zona-card");
+
+                        cards.forEach(card => {
+                            const codigo = card.getAttribute("data-idzona").toLowerCase();
+                            const nombre = card.getAttribute("data-nombre").toLowerCase();
+
+                            const col = card.closest('.col');
+                            const visible = searchText === "" || codigo.includes(searchText) || nombre.includes(searchText);
+
+                            if (visible) {
+                                if (col.style.display === 'none' || col.style.display === '') {
+                                    col.style.display = "block";
+                                    animateCSS(col, 'animate__fadeIn');
+                                }
+                                matchFound = true;
+                                totalMatchFound = true; // Al menos un match global
+                            } else {
+                                if (col.style.display !== 'none') {
+                                    animateCSS(col, 'animate__fadeOut', () => {
+                                        col.style.display = "none";
+                                    });
+                                }
+                            }
+                        });
+
+                        if (matchFound) {
+                            if (group.style.display === 'none' || group.style.display === '') {
+                                group.style.display = "block";
+                                animateCSS(group, 'animate__fadeIn');
+                            }
+                        } else {
+                            if (group.style.display !== 'none') {
+                                animateCSS(group, 'animate__fadeOut', () => {
+                                    group.style.display = "none";
+                                });
+                            }
+                        }
+                    });
+
+                    // Mostrar u ocultar mensaje de "Sin coincidencias"
+                    if (!totalMatchFound) {
+                        noResultsCard.classList.remove("d-none");
+                        animateCSS(noResultsCard, 'animate__fadeIn');
+                    } else {
+                        if (!noResultsCard.classList.contains("d-none")) {
+                            animateCSS(noResultsCard, 'animate__fadeOut', () => {
+                                noResultsCard.classList.add("d-none");
+                            });
+                        }
+                    }
+                });
+
+
+                document.querySelectorAll(".group-filter").forEach(item => {
+                    item.addEventListener("click", function (e) {
+                        e.preventDefault();
+                        const grupoSeleccionado = this.getAttribute("data-group");
+
+                        document.querySelectorAll(".zona-group").forEach(group => {
+                            const groupType = group.getAttribute("data-group");
+
+                            if (grupoSeleccionado === "all" || groupType === grupoSeleccionado) {
+                                if (group.style.display === 'none' || group.style.display === '') {
+                                    group.style.display = "block";
+                                    animateCSS(group, 'animate__fadeIn');
+                                }
+                            } else {
+                                if (group.style.display !== 'none') {
+                                    animateCSS(group, 'animate__fadeOut', () => {
+                                        group.style.display = "none";
+                                    });
+                                }
+                            }
+                        });
+                    });
+                });
+            });
+        </script>
 
     </section>
 </body>

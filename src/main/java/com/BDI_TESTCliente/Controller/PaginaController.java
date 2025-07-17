@@ -6,6 +6,8 @@ import com.BDI_TESTCliente.ML.NodoRecepccion;
 import com.BDI_TESTCliente.ML.Result;
 import com.BDI_TESTCliente.ML.Transaccion;
 import com.BDI_TESTCliente.ML.Usuario;
+import com.BDI_TESTCliente.ML.ZonaExtraccion;
+import com.BDI_TESTCliente.ML.ZonaInyeccion;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,6 +34,8 @@ public class PaginaController {
     private final String apiNodoUrl = "http://localhost:8081/api/nodos/v1";
 
     private final String apiTransaccion = "http://localhost:8081/api/transacciones/v1";
+
+    private final String apiZonas = "http://localhost:8081/api/zonas/v1";
 
     private final RestTemplate restTemplate = new RestTemplate();
 
@@ -154,28 +158,85 @@ public class PaginaController {
 
         return "transacciones";
     }
-    
+
+    @GetMapping("/detalleTransaccion")
+    public String mostrarDetalleTransaccion(@RequestParam("idOperacion") int idOperacion, Model model) {
+        return "detalleTransaccion";
+    }
+
     @GetMapping("/zonas")
-    public String mostrarZonas(Model model){
+    public String mostrarZonas(Model model) {
+        ResponseEntity<Result<ZonaInyeccion>> responseZonaInyeccion = restTemplate.exchange(
+                apiZonas + "/zonainyeccion",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<ZonaInyeccion>>() {
+        });
+
+        Result<ZonaInyeccion> resultZonaInyeccion = responseZonaInyeccion.getBody();
+
+        ResponseEntity<Result<ZonaExtraccion>> responseZonaExtraccion = restTemplate.exchange(
+                apiZonas + "/zonaextraccion",
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<Result<ZonaExtraccion>>() {
+        });
+
+        Result<ZonaExtraccion> resultZonaExtraccion = responseZonaExtraccion.getBody();
+
+        if (resultZonaInyeccion != null && resultZonaInyeccion.correct && resultZonaExtraccion != null && resultZonaExtraccion.correct) {
+            List<ZonaInyeccion> zonasInyeccion = resultZonaInyeccion.objects;
+            model.addAttribute("zonasInyeccion", zonasInyeccion);
+            List<ZonaExtraccion> zonasExtraccion = resultZonaExtraccion.objects;
+            model.addAttribute("zonasExtraccion", zonasExtraccion);
+        } else {
+            model.addAttribute("error", resultZonaExtraccion != null ? resultZonaExtraccion.errorMessage : "Error desconocido");
+        }
+
         return "zonas";
     }
 
+    @GetMapping("/detalleZonaInyeccion")
+    public String mostrarDetalleZonaInyeccion(@RequestParam("nombreZona") String nombreZona, Model model) {
+        return "detalleZona";
+    }
+
+    @GetMapping("/detalleZonaExtraccion")
+    public String mostrarDetalleZonaExtraccion(@RequestParam("nombreZona") String nombreZona, Model model) {
+        return "detalleZona";
+    }
+
+    @GetMapping("/detalleNodoComercial")
+    public String mostrarDetalleNodoComercial(@RequestParam("nombreNodoComercial") String codigoNodoComercial, Model model) {
+        return "detalleNodoComercial";
+    }
+
     @GetMapping("/detalleContrato")
-    public String obtenerContratoPorCodigo(@RequestParam("codigo") String codigoContrato, Model model) {
+    public String obtenerContratoPorCodigo(@RequestParam("idContrato") int idContrato, Model model) {
         try {
 
             ResponseEntity<Result<Contrato>> response = restTemplate.exchange(
-                    apiContratoUrl + "/por-codigo-contrato?codigoContrato=" + codigoContrato,
+                    apiContratoUrl + "/por-id-contrato?idContrato=" + idContrato,
                     HttpMethod.GET,
-                    null,
+                    HttpEntity.EMPTY,
                     new ParameterizedTypeReference<Result<Contrato>>() {
             }
             );
 
             Result<Contrato> resultContrato = response.getBody();
 
-            if (resultContrato != null && resultContrato.correct) {
+            ResponseEntity<Result<Transaccion>> responseTransaccion = restTemplate.exchange(
+                    apiTransaccion + "/por-id-contrato?idContrato=" + idContrato,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Transaccion>>() {
+            });
+
+            Result<Transaccion> resultTransaccion = responseTransaccion.getBody();
+
+            if (resultContrato != null && resultContrato.correct && resultTransaccion != null && resultTransaccion.correct) {
                 model.addAttribute("contrato", resultContrato.object);
+                model.addAttribute("transacciones", resultTransaccion.objects);
             } else {
                 model.addAttribute("error", resultContrato != null ? resultContrato.errorMessage : "Contrato no encontrado.");
             }
@@ -230,5 +291,5 @@ public class PaginaController {
         // Procesamiento lectura del archivo y guardarlo en un punto del sistema
         return null;
     }
-    
+
 }

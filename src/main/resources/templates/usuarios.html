@@ -22,59 +22,63 @@
                 <!-- sec:authorize="hasAnyRole('PROGRAMADOR','Administrador')" -->
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover table-bordered text-center fs-6 align-middle" id="usuarios">
-                    <thead class="table-dark text-center align-middle">
-                        <tr>
-                            <th class="w-50">Nombre Empresa</th>
-                            <th class="w-25">Contratos Registrados</th>
-                            <th class="w-auto" data-dt-order="disable">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-usuarios">
-                        <tr th:each="usuario : ${usuarios}">
-                            <th class="align-middle text-center" th:text="${usuario.nombre}"></th>
-                            <td class="align-middle text-center">
-                                <span
-                                    th:text="${contratosPorUsuario[usuario.idUsuario] != null ? contratosPorUsuario[usuario.idUsuario] : '0'}"></span>
-                            </td>
-                            <td class="align-middle text-center" data-label="Acciones">
-                                <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
-                                    <a th:href="@{/detalleUsuario(nombre=${usuario.nombre})}"
-                                        class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
-                                        style="width: 3rem; height: 3rem;" title="Ver usuario">
-                                        <i class="bi bi-person-circle fs-5"></i>
-                                    </a>
+            <div th:if="${usuarios}" class="card shadow p-4 h-100">
+                <div class="table-responsive">
+                    <table class="table table-hover table-bordered text-center fs-6 align-middle" id="usuarios">
+                        <thead class="table-dark text-center align-middle">
+                            <tr>
+                                <th class="w-50">Nombre Empresa</th>
+                                <th class="w-25">Contratos Registrados</th>
+                                <th class="w-auto" data-dt-order="disable">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-usuarios">
+                            <tr th:each="usuario : ${usuarios}">
+                                <th class="align-middle text-center" th:text="${usuario.nombre}"></th>
+                                <td class="align-middle text-center">
+                                    <span
+                                        th:text="${contratosPorUsuario[usuario.idUsuario] != null ? contratosPorUsuario[usuario.idUsuario] : '0'}"></span>
+                                </td>
+                                <td class="align-middle text-center" data-label="Acciones">
+                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                        <a th:href="@{/detalleUsuario(nombre=${usuario.nombre})}"
+                                            class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                            style="width: 3rem; height: 3rem;" title="Ver usuario">
+                                            <i class="bi bi-person-circle fs-5"></i>
+                                        </a>
 
-                                    <button title="Editar datos"
-                                        class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
-                                        style="width: 3rem; height: 3rem;" th:data-idusuario="${usuario.idUsuario}"
-                                        th:data-nombre="${usuario.nombre}">
-                                        <i class="bi bi-pencil-square fs-5"></i>
-                                    </button>
+                                        <button title="Editar datos"
+                                            class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
+                                            style="width: 3rem; height: 3rem;" th:data-idusuario="${usuario.idUsuario}"
+                                            th:data-nombre="${usuario.nombre}">
+                                            <i class="bi bi-pencil-square fs-5"></i>
+                                        </button>
 
-                                    <button title="Ver contratos"
-                                        class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
-                                        style="width: 3rem; height: 3rem;" th:data-idusuario="${usuario.idUsuario}"
-                                        th:data-nombre="${usuario.nombre}">
-                                        <i class="bi bi-person-lines-fill fs-5"></i>
-                                    </button>
+                                        <button title="Ver contratos"
+                                            class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
+                                            style="width: 3rem; height: 3rem;" th:data-idusuario="${usuario.idUsuario}"
+                                            th:data-nombre="${usuario.nombre}">
+                                            <i class="bi bi-person-lines-fill fs-5"></i>
+                                        </button>
 
-                                    <button type="button" class="btn btn-danger btn-sm rounded-circle delete-usuario"
-                                        th:data-id="${usuario.idUsuario}" style="width: 3rem; height: 3rem;"
-                                        title="Borrar Usuario">
-                                        <i class="bi bi-trash fs-4"></i>
-                                    </button>
-                                </div>
-                            </td>
-                            <!-- <a class="btn btn-danger btn-sm btn-action btn-md mb-2 rounded-circle">
-                                th:href="@{/Usuario/Delete/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"
-                                <i class="bi bi-trash3"></i>
-                            </a> -->
-                        </tr>
-                    </tbody>
-                </table>
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm rounded-circle delete-usuario"
+                                            th:data-id="${usuario.idUsuario}" style="width: 3rem; height: 3rem;"
+                                            title="Borrar Usuario">
+                                            <i class="bi bi-trash fs-4"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <!-- <a class="btn btn-danger btn-sm btn-action btn-md mb-2 rounded-circle">
+                        th:href="@{/Usuario/Delete/{IdUsuario}(IdUsuario = ${usuarioDirecciones.Usuario.IdUsuario})}"
+                        <i class="bi bi-trash3"></i>
+                    </a> -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
         </div>
 
         <!-- Modal editar datos usuario -->
@@ -238,7 +242,7 @@
                                     <td>
                                         <a title="Ver contrato"
                                             class="btn btn-success btn-sm btn-action btn-lg mb-2 rounded-circle"
-                                            href="/detalleContrato?codigo=${encodeURIComponent(contrato.codigoContrato)}"
+                                            href="/detalleContrato?idContrato=${contrato.idContrato}"
                                             style="width: 3rem; height: 3rem;">
                                             <i class="bi bi-eye fs-4"></i>
                                         </a>
