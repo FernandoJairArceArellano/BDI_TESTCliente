@@ -22,7 +22,7 @@
                             <th class="text-center align-middle">Codigo Contrato</th>
                             <th class="text-center">Cantidad Asignada Entregada</th>
                             <th class="text-center">Cantidad Asignada Recepcion</th>
-                            <th class="text-center">Cantidad Nominada Entregada</th>
+                            <th class="text-center">Cantidad Nominada Entrega</th>
                             <th class="text-center">Cantidad Nominada Recepcion</th>
                             <th class="text-center">Gas en Exceso</th>
                             <th class="text-center">Cargo Gas en Exceso</th>
@@ -39,9 +39,9 @@
                             <td
                                 th:text="${transaccion.contrato != null && transaccion.contrato.codigoContrato != null ? transaccion.contrato.codigoContrato : 'SIN CONTRATO'}">
                             </td>
-                            <td th:text="${transaccion.cantidadAsignadaEntregada}"></td>
+                            <td th:text="${transaccion.cantidadAsignadaEntrega}"></td>
                             <td th:text="${transaccion.cantidadAsignadaRecepcion}"></td>
-                            <td th:text="${transaccion.cantidadNominadaEntregada}"></td>
+                            <td th:text="${transaccion.cantidadNominadaEntrega}"></td>
                             <td th:text="${transaccion.cantidadNominadaRecepcion}"></td>
                             <td th:text="${transaccion.gasEnExceso}"></td>
                             <td th:text="${transaccion.cargoGasEnExceso}"></td>

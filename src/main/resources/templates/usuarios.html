@@ -148,18 +148,39 @@
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">
+                        <h3 class="modal-title">
                             <span class="text-success" style="font-weight: bold;">Contratos</span>
                             del Usuario
                             <span id="viewUserName" style="font-weight: bold;"></span>
-                        </h5>
+                        </h3>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <!-- animate__animated animate__fadeInDown -->
+                    <div class="container mt-4 mb-4 t-5 "
+                        style="position: relative; z-index: 1055;">
+                        <h5 class="form-label">Buscar Contrato</h5>
+                        <div class="input-group input-group-lg mb-3">
+                            <input id="searchInput" class="form-control" type="text"
+                                placeholder="Buscar por código, Zonas o fecha" aria-label="Search">
+                            <span class="input-group-text text-dark-emphasis"><i class="bi bi-search"></i></span>
+                            <div class="btn-group ms-2">
+                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown" aria-expanded="false">
+                                    Filtrar grupo
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li><a class="dropdown-item group-filter" href="#" data-group="all">Todos</a></li>
+                                    <li><a class="dropdown-item group-filter" href="#" data-group="inyeccion">Zonas Inyección</a></li>
+                                    <li><a class="dropdown-item group-filter" href="#" data-group="extraccion">Zonas Extracción</a></li>
+                                </ul>
+                            </div>
+                        </div>
                     </div>
                     <div class="modal-body">
                         <table class="table table-bordered text-center align-middle">
                             <thead class="table-dark">
                                 <tr>
-                                    <th>#</th>
+                                    <!-- <th>#</th> -->
                                     <th>Código</th>
                                     <th>Fecha</th>
                                     <th>Zona Extracción</th>
@@ -234,7 +255,7 @@
                                 response.objects.forEach((contrato) => {
                                     const row = `
                                 <tr>
-                                    <td>${contrato.idContrato}</td>
+                                    <!-- <td>${contrato.idContrato}</td> -->
                                     <td>${contrato.codigoContrato}</td>
                                     <td>${new Date(contrato.fecha).toLocaleDateString()}</td>
                                     <td>${contrato.zonaExtraccion?.nombreZona || 'N/A'}</td>

@@ -34,9 +34,12 @@
 
             <div class="row">
                 <div class="col-md-6">
+                    <!-- Contrato Datos -->
                     <div th:if="${contrato}" class="card shadow p-4 h-100">
                         <div class="row">
                             <div class="col">
+                                <div id="contratoContainer" th:attr="data-id-contrato=${contrato.idContrato}"
+                                    style="display:none;"></div>
                                 <h4 th:text="'Código: ' + ${contrato.codigoContrato}" class="fw-bold"></h4>
                             </div>
                             <div class="col">
@@ -90,14 +93,16 @@
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div th:if="${contrato}" class="card shadow p-4 h-100">
+                    <!-- Transacciones Datos -->
+                    <div th:if="${transacciones}" class="card shadow p-4 h-100">
                         <h4 class="mb-3 text-center fw-bold">Transacciones relacionadas con el contrato</h4>
 
                         <div id="alertContainer" class="mt-3"></div>
 
                         <div class="container mb-3">
                             <button type="button" id="btnAgregarTransaccion" class="btn btn-outline-success btn-lg"
-                                th:data-id-contrato="${contrato.idContrato}">
+                                th:data-id-contrato="${contrato.idContrato}"
+                                th:data-codigo-contrato="${contrato.codigoContrato}">
                                 <i class="bi bi-plus-circle-dotted"></i> Agregar transaccion
                             </button>
                         </div>
@@ -106,14 +111,16 @@
                             <table class="table table-bordered text-center align-middle" id="transacciones">
                                 <thead class="table-dark">
                                     <tr>
-                                        <th class="w-50">Contrato #</th>
-                                        <th class="w-25">Total a Facturar</th>
-                                        <th class="w-25" data-dt-order="disable">Acciones</th>
+                                        <th class="w-10">Contrato #</th>
+                                        <th class="w-40">Cargo Uso</th>
+                                        <th class="w-40">Total a Facturar</th>
+                                        <th class="w-auto" data-dt-order="disable">Acciones</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr th:each="transaccion : ${transacciones}">
                                         <th th:text="${transaccion.idOperacion}"></th>
+                                        <th th:text="${transaccion.cargoUso}"></th>
                                         <th th:text="${transaccion.totalAFacturar}"></th>
                                         <th>
                                             <a class="btn btn-success btn-sm rounded-circle"
@@ -135,8 +142,256 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Modal agregar nueva transaccion -->
+            <div class="modal fade" id="addTransaccionModal" tabindex="-1" aria-labelledby="addTransaccionModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form id="addTransaccionForm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 class="modal-title" id="addTransaccionModalLabel">
+                                    <span class="text-success">Agregar</span> 
+                                    transacción para 
+                                    <span id="modalUserName" class="fw-bold"></span>
+                                </h3>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <input type="hidden" id="codigoContrato" name="codigoContrato">
+
+                                <!-- Cantidades -->
+                                <fieldset class="border p-3 mb-4 rounded">
+                                    <legend class="float-none w-auto px-2 fw-semibold">Cantidades</legend>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="cantidadAsignadaEntrega" class="form-label">Asignada
+                                                Entrega</label>
+                                            <input type="number" class="form-control" id="cantidadAsignadaEntrega"
+                                                name="cantidadAsignadaEntrega" min="0" step="0.001" required>
+
+                                            <label for="cantidadAsignadaRecepcion" class="form-label mt-2">Asignada
+                                                Recepción</label>
+                                            <input type="number" class="form-control" id="cantidadAsignadaRecepcion"
+                                                name="cantidadAsignadaRecepcion" min="0" step="0.001" required>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <label for="cantidadNominadaEntrega" class="form-label">Nominada
+                                                Entrega</label>
+                                            <input type="number" class="form-control" id="cantidadNominadaEntrega"
+                                                name="cantidadNominadaEntrega" min="0" step="0.001" required>
+
+                                            <label for="cantidadNominadaRecepcion" class="form-label mt-2">Nominada
+                                                Recepción</label>
+                                            <input type="number" class="form-control" id="cantidadNominadaRecepcion"
+                                                name="cantidadNominadaRecepcion" min="0" step="0.001" required>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Row Cargos Tarifas -->
+                                <div class="row">
+                                    <div class="col">
+                                        <!-- Cargos -->
+                                        <fieldset class="border p-3 mb-4 rounded">
+                                            <legend class="float-none w-auto px-2 fw-semibold">Cargos</legend>
+                                            <div class="row g-3">
+                                                <div class="col-md-12">
+                                                    <label for="gasEnExceso" class="form-label">Gas en Exceso</label>
+                                                    <input type="number" class="form-control" id="gasEnExceso"
+                                                        name="gasEnExceso" min="0" step="0.001" required>
+
+                                                    <label for="cargoUso" class="form-label mt-2">Uso</label>
+                                                    <input type="number" class="form-control" id="cargoUso"
+                                                        name="cargoUso" min="0" step="0.001" required>
+
+                                                    <label for="cargoGasEnExceso" class="form-label mt-2">Cargo Gas en
+                                                        Exceso</label>
+                                                    <input type="number" class="form-control" id="cargoGasEnExceso"
+                                                        name="cargoGasEnExceso" min="0" step="0.001" required>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col">
+                                        <!-- Tarifa -->
+                                        <fieldset class="border p-3 mb-4 rounded">
+                                            <legend class="float-none w-auto px-2 fw-semibold">Tarifa</legend>
+                                            <div class="row g-3">
+                                                <div class="col-md-12">
+                                                    <label for="tarifaExcesoFirme" class="form-label">Exceso
+                                                        Firme</label>
+                                                    <input type="number" class="form-control" id="tarifaExcesoFirme"
+                                                        name="tarifaExcesoFirme" min="0" step="0.001" required>
+
+                                                    <label for="tarifaUsoInterrumpible" class="form-label mt-2">Uso
+                                                        Interrumpible</label>
+                                                    <input type="number" class="form-control"
+                                                        id="tarifaUsoInterrumpible" name="tarifaUsoInterrumpible"
+                                                        min="0" step="0.001" required>
+
+                                                    <label for="totalAFacturar" class="form-label mt-2">Total a
+                                                        Facturar</label>
+                                                    <input type="number" class="form-control" id="totalAFacturar"
+                                                        name="totalAFacturar" min="0" step="0.001">
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+
+
+                                <!-- Nodos -->
+                                <fieldset class="border p-3 rounded">
+                                    <legend class="float-none w-auto px-2 fw-semibold">Nodos</legend>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="nodoRecepcion" class="form-label">Nodo Recepción</label>
+                                            <select class="form-select" id="nodoRecepcion" name="nodoRecepcion"
+                                                required></select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="nodoEntrega" class="form-label">Nodo Entrega</label>
+                                            <select class="form-select" id="nodoEntrega" name="nodoEntrega"
+                                                required></select>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
         <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const modalElement = document.getElementById('addTransaccionModal');
+                if (!modalElement) return;
+
+                const addTransaccionModalInstance = new bootstrap.Modal(modalElement);
+
+                // Función SweetAlert con gif y tamaño personalizado
+                function mostrarSweetMensaje(tipo, mensaje, gif = null, width = 300, height = 200, tiempo = 2500) {
+                    const config = {
+                        title: tipo === "success" ? "Correcto" :
+                            tipo === "error" ? "Error" :
+                                tipo === "warning" ? "Alerta" :
+                                    tipo === "info" ? "Información" : "Mensaje",
+                        text: mensaje,
+                        icon: tipo,
+                        timer: tiempo,
+                        showConfirmButton: false
+                    };
+
+                    if (gif) {
+                        config.imageUrl = gif;
+                        config.imageWidth = width;
+                        config.imageHeight = height;
+                        delete config.icon;
+                    }
+
+                    Swal.fire(config);
+                }
+
+                // Abrir modal para agregar Transaccion
+                $(document).on('click', '#btnAgregarTransaccion', function () {
+                    $('#addTransaccionForm')[0].reset();
+                    const idContrato = $('#contratoContainer').data('id-contrato');
+                    const codigoContrato = $(this).data('codigo-contrato');
+
+                    if (!idContrato || !codigoContrato) return;
+
+                    $('#idContrato').val(idContrato);
+                    $('#codigoContrato').text(codigoContrato);
+
+                    cargarNodos();
+                    addTransaccionModalInstance.show();
+                });
+
+                // Cargar nodos comerciales
+                function cargarNodos() {
+                    $('#nodoRecepcion').empty();
+                    $('#nodoEntrega').empty();
+
+                    $.get('http://localhost:8081/api/nodos/v1/recepccion', function (response) {
+                        if (response.correct && response.objects.length > 0) {
+                            response.objects.forEach(z => {
+                                $('#nodoRecepcion').append(`<option value="${z.codigoNodo}">${z.codigoNodo}</option>`);
+                            });
+                        } else {
+                            $('#nodoRecepcion').append('<option value="">Sin datos</option>');
+                        }
+                    });
+
+                    $.get('http://localhost:8081/api/nodos/v1/entrega', function (response) {
+                        if (response.correct && response.objects.length > 0) {
+                            response.objects.forEach(z => {
+                                $('#nodoEntrega').append(`<option value="${z.codigoNodo}">${z.codigoNodo}</option>`);
+                            });
+                        } else {
+                            $('#nodoEntrega').append('<option value="">Sin datos</option>');
+                        }
+                    });
+                }
+
+                // Agregar transaccion
+                $('#addTransaccionForm').submit(function (e) {
+                    e.preventDefault();
+                    const transaccionData = {
+                        cantidadAsignadaEntrega: $('#cantidadAsignadaEntrega').val(),
+                        cantidadAsignadaRecepcion: $('#cantidadAsignadaRecepcion').val(),
+                        cantidadNominadaRecepcion: $('#cantidadNominadaRecepcion').val(),
+                        cantidadNominadaEntrega: $('#cantidadNominadaEntrega').val(),
+                        gasEnExceso: $('#gasEnExceso').val(),
+                        cargoUso: $('#cargoUso').val(),
+                        cargoGasEnExceso: $('#cargoGasEnExceso').val(),
+                        tarifaExcesoFirme: $('#tarifaExcesoFirme').val(),
+                        tarifaUsoInterrumpible: $('#tarifaUsoInterrumpible').val(),
+                        totalAFacturar: $('#cargoUso').val(),
+                        contrato: {
+                            codigoContrato: $('#codigoContrato').val()
+                        },
+                        nodoRecepcion: {
+                            nodoRecepcion: $('#nodoRecepccion').val()
+                        },
+                        nodoEntrega: {
+                            nodoRecepcion: $('#nodoEntrega').val()
+                        }
+                    };
+
+                    $.ajax({
+                        url: 'http://localhost:8081/api/transacciones/v1/add',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(transaccionData),
+                        success: function (response) {
+                            if (response.correct) {
+                                mostrarSweetMensaje(
+                                    "success",
+                                    "Transacción agregado correctamente",
+                                    "https://i.pinimg.com/originals/06/ae/07/06ae072fb343a704ee80c2c55d2da80a.gif",
+                                    300, 200, 2500
+                                );
+                                setTimeout(() => location.reload(), 4000);
+                            } else {
+                                mostrarSweetMensaje("error", response.errorMessage || "Error al agregar la transacción", null, 300, 200, 4000);
+                            }
+                        },
+                        error: function () {
+                            mostrarSweetMensaje("warning", "Error al comunicarse con el servidor", "https://media.tenor.com/Gjv594-ah9sAAAAM/doubt-doubt-it.gif", 250, 250, 4000);
+                        }
+                    });
+                });
+            });
+
             document.addEventListener("DOMContentLoaded", function () {
                 new DataTable('#transacciones', {
                     columnDefs: [

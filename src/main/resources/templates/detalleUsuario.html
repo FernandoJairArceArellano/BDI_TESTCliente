@@ -8,136 +8,195 @@
 
 <body>
     <section layout:fragment="content">
-        <div class="container-fluid mt-4 mb-4">
-            <h1 class="mb-4">Detalle de <span class="fw-bold" th:text="${usuario.nombre}"></span></h1>
-            <div id="usuarioContainer" th:attr="data-id=${usuario.idUsuario}" style="display:none;"></div>
+        <div class="container-fluid">
+
+            <!-- Top del usuario -->
+            <div class="d-flex align-items-baseline justify-content-between">
+                <!-- Titulo del Usuario -->
+                <h1 class="fw-bold"> Detalle del Usuario</h1>
+                <!-- <span class="fw-bold" th:text="${usuario.nombre}"></span> -->
+                <div id="usuarioContainer" th:attr="data-id=${usuario.idUsuario}" style="display:none;"></div>
+
+                <!-- Botones prueba animaciones -->
+                <h5>Probar Animaciones</h5>
+                <ul>
+                    <button id="btnTestSuccess" class="btn btn-outline-success m-1">
+                        <i class="bi bi-check-circle"></i> Éxito con GIF
+                    </button>
+                    <button id="btnTestError" class="btn btn-outline-danger m-1">
+                        <i class="bi bi-x-circle"></i> Error con GIF
+                    </button>
+                    <button id="btnTestWarning" class="btn btn-outline-warning m-1">
+                        <i class="bi bi-exclamation-triangle"></i> Warning con GIF
+                    </button>
+                    <button id="btnTestRecycle" class="btn btn-outline-secondary m-1">
+                        <i class="bi bi-recycle"></i> Eliminado con GIF
+                    </button>
+                </ul>
+            </div>
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
-            <!-- Fila horizontal -->
-            <div class="row">
+            <div class="row mb-3">
                 <!-- Columna de Usuario -->
-                <div class="col-md-6">
-                    <div class="container mt-4">
-                        <h5>Probar Animaciones</h5>
-                        <button id="btnTestSuccess" class="btn btn-outline-success m-1">
-                            <i class="bi bi-check-circle"></i> Éxito con GIF
-                        </button>
-                        <button id="btnTestError" class="btn btn-outline-danger m-1">
-                            <i class="bi bi-x-circle"></i> Error con GIF
-                        </button>
-                        <button id="btnTestWarning" class="btn btn-outline-warning m-1">
-                            <i class="bi bi-exclamation-triangle"></i> Warning con GIF
-                        </button>
-                        <button id="btnTestRecycle" class="btn btn-outline-secondary m-1">
-                            <i class="bi bi-recycle"></i> Eliminado con GIF
-                        </button>
-                    </div>
-                    <div th:if="${usuario}" class="card shadow p-4 h-100">
-                        <h5 class="mb-3">Usuario</h5>
-                        <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"></span></p>
-                    </div>
-                </div>
-
-                <!-- Columna de Contratos -->
-                <div class="col-md-6">
-                    <div class="card shadow p-4 h-100">
-                        <h4 class="mb-3 text-center fw-bold">Contratos Registrados</h4>
-
-                        <div id="alertContainer" class="mt-3"></div>
-
-                        <div class="container mb-3">
-                            <button type="button" id="btnAgregarContrato" class="btn btn-outline-success btn-lg"
-                                th:data-nombre="${usuario.nombre}">
-                                <i class="bi bi-plus-circle-dotted"></i> Agregar Contrato
-                            </button>
-                        </div>
-                        
-                        <div class="container">
-                            <table class="table table-bordered text-center align-middle" id="contratos">
-                                <thead class="table-dark">
-                                    <tr>
-                                        <th class="w-50">Codigo Contrato</th>
-                                        <th class="w-25">Fecha</th>
-                                        <th class="w-25" data-dt-order="disable">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr th:each="contrato : ${contratos}">
-                                        <th th:text="${contrato.codigoContrato}"></th>
-                                        <th th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></th>
-
-                                        <th>
-                                            <a class="btn btn-success btn-sm rounded-circle"
-                                                th:href="@{/detalleContrato(idContrato=${contrato.idContrato})}"
-                                                style="width: 3rem; height: 3rem;" title="Ver contrato">
-                                                <i class="bi bi-eye fs-4"></i>
-                                            </a>
-                                            <button type="button"
-                                                class="btn btn-danger btn-sm rounded-circle delete-contrato"
-                                                th:data-id="${contrato.idContrato}" style="width: 3rem; height: 3rem;" title="Borrar Contrato">
-                                                <i class="bi bi-trash fs-4"></i>
-                                            </button>
-                                        </th>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal agregar nuevo contrato -->
-                <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
-                    aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <form id="addContractForm">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="addContractModalLabel">
-                                        <span class="text-success">Agregar </span>
-                                        contrato para
-                                        <span id="modalUserName" class="fw-bold"></span>
-                                    </h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body row g-3">
-                                    <input type="hidden" id="idUsuario" name="idUsuario">
-
-                                    <div class="col-md-6">
-                                        <label for="codigoContrato">Código Contrato</label>
-                                        <input type="text" class="form-control" id="codigoContrato"
-                                            name="codigoContrato" required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="fecha">Fecha</label>
-                                        <input min="2000-01-01" max="" type="date" class="form-control" id="fecha" name="fecha"
-                                            required>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="zonaExtraccion">Zona de Extracción</label>
-                                        <select class="form-select" id="zonaExtraccion" name="zonaExtraccion"
-                                            required></select>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <label for="zonaInyeccion">Zona de Inyección</label>
-                                        <select class="form-select" id="zonaInyeccion" name="zonaInyeccion"
-                                            required></select>
+                <div class="col-md-9 d-flex">
+                    <!-- Card Usuario -->
+                    <div th:if="${usuario}" class="card border-0 shadow flex-fill p-4  h-100">
+                        <div class="card-body p-7">
+                            <div class="row align-items-center h-100">
+                                <div class="col-auto d-flex ms-auto ms-md-0">
+                                    <div class="avatar avatar-circle avatar-xxl">
+                                        <img class="avatar-img"
+                                            src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg"
+                                            alt="Imagen de Empresa" width="112" height="112">
                                     </div>
                                 </div>
-
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Guardar</button>
-                                    <button type="button" class="btn btn-danger"
-                                        data-bs-dismiss="modal">Cancelar</button>
+                                <div class="col-auto me-auto d-flex flex-column">
+                                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"
+                                            class="small text-secondary fw-bold d-block mb-4"></span></p>
+                                    <div class="d-flex">
+                                        Acciones extras para el usuario
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-auto ms-auto text-center mt-8 mt-md-0">
+                                    <div class="hstack d-inline-flex gap-6">
+                                        <div>
+                                            <h4 class="h2 mb-0" th:text="${usuario.idUsuario}"></h4>
+                                            <p class="text-secondary mb-0">Id Empresa</p>
+                                        </div>
+                                        <div class="vr"></div>
+                                        <div>
+                                            <h4 class="h2 mb-0">° Contratos</h4>
+                                            <p class="text-secondary mb-0">Contratos Resgitrados</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
+                <div class="col-md-3 d-flex">
+                    <!-- Card Informacion -->
+                    <div class="card border-0 shadow flex-fill w-100">
+                        <div class="card-body text-center">
+                            <div class="row align-items-center h-100">
+                                <div class="col">
+                                    <h3 class="text-secondary">Fecha de Registro del Usuario</h3>
 
+                                    <div class="chart-container w-100px h-100px mx-auto mt-3">
+                                        <hr class="hr" />
+
+                                        <div class="input-group date" data-provide="datepicker">
+                                            <input type="date" class="form-control">
+                                            <div class="input-group-addon">
+                                                <span class="glyphicon glyphicon-th"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal agregar nuevo contrato -->
+            <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <form id="addContractForm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addContractModalLabel">
+                                    <span class="text-success">Agregar </span>
+                                    contrato para
+                                    <span id="modalUserName" class="fw-bold"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body row g-3">
+                                <input type="hidden" id="idUsuario" name="idUsuario">
+
+                                <div class="col-md-6">
+                                    <label for="codigoContrato">Código Contrato</label>
+                                    <input type="text" class="form-control" id="codigoContrato" name="codigoContrato"
+                                        required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha">Fecha</label>
+                                    <input min="2000-01-01" max="" type="date" class="form-control" id="fecha"
+                                        name="fecha" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="zonaExtraccion">Zona de Extracción</label>
+                                    <select class="form-select" id="zonaExtraccion" name="zonaExtraccion"
+                                        required></select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="zonaInyeccion">Zona de Inyección</label>
+                                    <select class="form-select" id="zonaInyeccion" name="zonaInyeccion"
+                                        required></select>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Columna de Contratos -->
+            <div class="col-md-7">
+                <div class="card shadow p-4 h-100">
+                    <h4 class="mb-3 text-center fw-bold">Contratos Registrados</h4>
+
+                    <div id="alertContainer" class="mt-3"></div>
+
+                    <div class="container mb-3">
+                        <button type="button" id="btnAgregarContrato" class="btn btn-outline-success btn-lg"
+                            th:data-nombre="${usuario.nombre}">
+                            <i class="bi bi-plus-circle-dotted"></i> Agregar Contrato
+                        </button>
+                    </div>
+
+                    <div class="container">
+                        <table class="table table-bordered text-center align-middle" id="contratos">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th class="w-50">Codigo Contrato</th>
+                                    <th class="w-25">Fecha</th>
+                                    <th class="w-25" data-dt-order="disable">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="contrato : ${contratos}">
+                                    <th th:text="${contrato.codigoContrato}"></th>
+                                    <th th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></th>
+
+                                    <th>
+                                        <a class="btn btn-success btn-sm rounded-circle"
+                                            th:href="@{/detalleContrato(idContrato=${contrato.idContrato})}"
+                                            style="width: 3rem; height: 3rem;" title="Ver contrato">
+                                            <i class="bi bi-eye fs-4"></i>
+                                        </a>
+                                        <button type="button"
+                                            class="btn btn-danger btn-sm rounded-circle delete-contrato"
+                                            th:data-id="${contrato.idContrato}" style="width: 3rem; height: 3rem;"
+                                            title="Borrar Contrato">
+                                            <i class="bi bi-trash fs-4"></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
 
