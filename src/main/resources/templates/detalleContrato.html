@@ -28,14 +28,14 @@
 <body>
     <section layout:fragment="content">
         <div class="container-fluid mt-4 mb-4">
-            <h1 class="mb-4">Detalle del Contrato</h1>
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
             <div class="row">
-                <div class="col-md-6">
+                <div class="col-md-6 mb-1">
                     <!-- Contrato Datos -->
                     <div th:if="${contrato}" class="card shadow p-4 h-100">
+                        <h1 class="mb-4">Detalle del Contrato</h1>
                         <div class="row">
                             <div class="col">
                                 <div id="contratoContainer" th:attr="data-id-contrato=${contrato.idContrato}"
@@ -43,7 +43,7 @@
                                 <h4 th:text="'Código: ' + ${contrato.codigoContrato}" class="fw-bold"></h4>
                             </div>
                             <div class="col">
-                                <p><strong>Fecha:</strong> <span
+                                <p class="fs-4"><strong>Fecha de contratación:</strong> <span
                                         th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></span></p>
                             </div>
                         </div>
@@ -90,12 +90,81 @@
                                 </a>
                             </div>
                         </div>
+                        <div class="container mt-5">
+                            <h1 class="text-center mb-4">Reporte de Transacciones por Estado</h1>
+
+                            <div id="mapContainer" style="height: 600px;"></div>
+                        </div>
+
+                        <script>
+                            // Datos ejemplo (Se pueden generar dinámicamente desde backend o JS)
+                            const data = [
+                                ['mx-bc', 120],
+                                ['mx-son', 85],
+                                ['mx-chh', 45],
+                                ['mx-coa', 200],
+                                ['mx-nl', 300],
+                                ['mx-tam', 180],
+                                ['mx-ver', 250],
+                                ['mx-cmx', 500],
+                                ['mx-jal', 400],
+                                ['mx-yuc', 75],
+                                // Agrega el resto de estados si quieres
+                            ];
+
+                            Highcharts.mapChart('mapContainer', {
+                                chart: {
+                                    map: 'countries/mx/mx-all'
+                                },
+
+                                title: {
+                                    text: 'Transacciones por Estado'
+                                },
+
+                                subtitle: {
+                                    text: 'Datos simulados - Julio 2025'
+                                },
+
+                                mapNavigation: {
+                                    enabled: true,
+                                    buttonOptions: {
+                                        verticalAlign: 'bottom'
+                                    }
+                                },
+
+                                colorAxis: {
+                                    min: 0,
+                                    stops: [
+                                        [0, '#d4e6f1'],
+                                        [0.5, '#3498db'],
+                                        [1, '#2c3e50']
+                                    ]
+                                },
+
+                                series: [{
+                                    data: data,
+                                    name: 'Transacciones',
+                                    states: {
+                                        hover: {
+                                            color: '#a29bfe'
+                                        }
+                                    },
+                                    dataLabels: {
+                                        enabled: true,
+                                        format: '{point.name}'
+                                    },
+                                    tooltip: {
+                                        pointFormat: 'Transacciones: <b>{point.value}</b>'
+                                    }
+                                }]
+                            });
+                        </script>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <!-- Transacciones Datos -->
                     <div th:if="${transacciones}" class="card shadow p-4 h-100">
-                        <h4 class="mb-3 text-center fw-bold">Transacciones relacionadas con el contrato</h4>
+                        <h3 class="mb-3 text-center fw-bold">Transacciones relacionadas con el contrato</h3>
 
                         <div id="alertContainer" class="mt-3"></div>
 
@@ -108,7 +177,7 @@
                         </div>
 
                         <div class="container">
-                            <table class="table table-bordered text-center align-middle" id="transacciones">
+                            <table class="table table-hover table-bordered text-center align-middle" id="transacciones">
                                 <thead class="table-dark">
                                     <tr>
                                         <th class="w-10">Contrato #</th>
@@ -123,17 +192,19 @@
                                         <th th:text="${transaccion.cargoUso}"></th>
                                         <th th:text="${transaccion.totalAFacturar}"></th>
                                         <th>
-                                            <a class="btn btn-success btn-sm rounded-circle"
-                                                th:href="@{/detalleTransaccion(idOperacion=${transaccion.idOperacion})}"
-                                                style="width: 3rem; height: 3rem;" title="Ver transaccion">
-                                                <i class="bi bi-eye fs-4"></i>
-                                            </a>
-                                            <button type="button"
-                                                class="btn btn-danger btn-sm rounded-circle delete-transaccion"
-                                                th:data-id="${transaccion.idOperacion}"
-                                                style="width: 3rem; height: 3rem;" title="Borrar transaccion">
-                                                <i class="bi bi-trash fs-4"></i>
-                                            </button>
+                                            <div class="d-flex align-items-center gap-2 justify-content-center">
+                                                <a class="btn btn-success btn-sm rounded-circle"
+                                                    th:href="@{/detalleTransaccion(idOperacion=${transaccion.idOperacion})}"
+                                                    style="width: 3rem; height: 3rem;" title="Ver transaccion">
+                                                    <i class="bi bi-eye fs-4"></i>
+                                                </a>
+                                                <button type="button"
+                                                    class="btn btn-danger btn-sm rounded-circle delete-transaccion"
+                                                    th:data-id="${transaccion.idOperacion}"
+                                                    style="width: 3rem; height: 3rem;" title="Borrar transaccion">
+                                                    <i class="bi bi-trash fs-4"></i>
+                                                </button>
+                                            </div>
                                         </th>
                                     </tr>
                                 </tbody>
@@ -151,8 +222,8 @@
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h3 class="modal-title" id="addTransaccionModalLabel">
-                                    <span class="text-success">Agregar</span> 
-                                    transacción para 
+                                    <span class="text-success">Agregar</span>
+                                    transacción para
                                     <span id="modalUserName" class="fw-bold"></span>
                                 </h3>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -310,7 +381,7 @@
                     if (!idContrato || !codigoContrato) return;
 
                     $('#idContrato').val(idContrato);
-                    $('#codigoContrato').text(codigoContrato);
+                    $('#codigoContrato').val(codigoContrato);
 
                     cargarNodos();
                     addTransaccionModalInstance.show();
@@ -360,10 +431,10 @@
                             codigoContrato: $('#codigoContrato').val()
                         },
                         nodoRecepcion: {
-                            nodoRecepcion: $('#nodoRecepccion').val()
+                            codigoNodo: $('#nodoRecepcion').val()
                         },
                         nodoEntrega: {
-                            nodoRecepcion: $('#nodoEntrega').val()
+                            codigoNodo: $('#nodoEntrega').val()
                         }
                     };
 
@@ -394,6 +465,7 @@
 
             document.addEventListener("DOMContentLoaded", function () {
                 new DataTable('#transacciones', {
+                    responsive: true,
                     columnDefs: [
                         { targets: "_all", className: "text-center align-middle" }
                     ],

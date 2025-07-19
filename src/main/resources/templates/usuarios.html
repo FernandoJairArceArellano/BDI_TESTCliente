@@ -4,6 +4,12 @@
 
 <head>
     <title layout:fragment="title">Inicio</title>
+    <style>
+        .custom-modal {
+            max-width: 800px I !important;
+            width: 800 !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -22,14 +28,14 @@
                 <!-- sec:authorize="hasAnyRole('PROGRAMADOR','Administrador')" -->
             </div>
 
-            <div th:if="${usuarios}" class="card shadow p-4 h-100">
-                <div class="table-responsive">
+            <div class="card shadow p-4 h-100">
+                <div th:if="${usuarios}" class="container">
                     <table class="table table-hover table-bordered text-center fs-6 align-middle" id="usuarios">
                         <thead class="table-dark text-center align-middle">
                             <tr>
-                                <th class="w-50">Nombre Empresa</th>
-                                <th class="w-25">Contratos Registrados</th>
-                                <th class="w-auto" data-dt-order="disable">Acciones</th>
+                                <th>Nombre Empresa</th>
+                                <th>Contratos Registrados</th>
+                                <th data-dt-order="disable">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-usuarios">
@@ -40,7 +46,7 @@
                                         th:text="${contratosPorUsuario[usuario.idUsuario] != null ? contratosPorUsuario[usuario.idUsuario] : '0'}"></span>
                                 </td>
                                 <td class="align-middle text-center" data-label="Acciones">
-                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                    <div class="d-flex align-items-center gap-2 justify-content-center">
                                         <a th:href="@{/detalleUsuario(nombre=${usuario.nombre})}"
                                             class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
                                             style="width: 3rem; height: 3rem;" title="Ver usuario">
@@ -78,123 +84,124 @@
                     </table>
                 </div>
             </div>
+            <!-- Modal editar datos usuario -->
+            <div class="modal animate__animated animate__fadeInLeft" id="editUserModal" tabindex="-1"
+                aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog custom-modal modal-dialog-centered ">
+                    <form id="editUserForm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">
+                                    <span class="text-warning">Editar</span>
+                                    datos de
+                                    <span id="modalUserName" style="font-weight: bold;"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body row g-3">
+                                <input type="hidden" id="idUsuario" name="idUsuario">
+                                <div class="col-md-12">
+                                    <label>Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-        </div>
+            <!-- Modal agregar Usuario -->
+            <div class="modal animate__animated" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog custom-modal modal-dialog-centered">
+                    <form id="addUserForm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addUserModalLabel">
+                                    <span class="text-success">Agregar</span> nuevo <span
+                                        style="font-weight: bold;">Usuario</span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
 
-        <!-- Modal editar datos usuario -->
-        <div class="modal animate__animated animate__fadeInLeft" id="editUserModal" tabindex="-1"
-            aria-labelledby="editUserModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <form id="editUserForm">
+                            <div class="modal-body row g-3">
+                                <div class="col-md-12">
+                                    <label>Nombre de la Empresa</label>
+                                    <input type="text" class="form-control" id="addNombre" name="nombre"
+                                        placeholder="Escribe el nombre de la empresa">
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-success">Guardar</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal ver contratos -->
+            <div class="modal fade" id="viewContractsModal" tabindex="-1" aria-labelledby="viewContractsModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="editUserModalLabel">
-                                <span class="text-warning">Editar</span>
-                                datos de
-                                <span id="modalUserName" style="font-weight: bold;"></span>
-                            </h5>
+                            <h3 class="modal-title">
+                                <span class="text-success" style="font-weight: bold;">Contratos</span>
+                                del Usuario
+                                <span id="viewUserName" style="font-weight: bold;"></span>
+                            </h3>
                             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                         </div>
-                        <div class="modal-body row g-3">
-                            <input type="hidden" id="idUsuario" name="idUsuario">
-                            <div class="col-md-6">
-                                <label>Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre">
+                        <!-- animate__animated animate__fadeInDown -->
+                        <div class="container mt-4 mb-4 t-5 " style="position: relative; z-index: 1055;">
+                            <h5 class="form-label">Buscar Contrato</h5>
+                            <div class="input-group input-group-lg mb-3">
+                                <input id="searchInput" class="form-control" type="text"
+                                    placeholder="Buscar por código, Zonas o fecha" aria-label="Search">
+                                <span class="input-group-text text-dark-emphasis"><i class="bi bi-search"></i></span>
+                                <div class="btn-group ms-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Filtrar grupo
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item group-filter" href="#" data-group="all">Todos</a>
+                                        </li>
+                                        <li><a class="dropdown-item group-filter" href="#" data-group="inyeccion">Zonas
+                                                Inyección</a></li>
+                                        <li><a class="dropdown-item group-filter" href="#" data-group="extraccion">Zonas
+                                                Extracción</a></li>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                            <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancelar</button>
+                        <div class="modal-body">
+                            <table class="table table-bordered text-center align-middle">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <!-- <th>#</th> -->
+                                        <th>Código</th>
+                                        <th>Fecha</th>
+                                        <th>Zona Extracción</th>
+                                        <th>Zona Inyección</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contractsTableBody">
+                                </tbody>
+                            </table>
                         </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal agregar Usuario -->
-        <div class="modal animate__animated" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <form id="addUserForm">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="addUserModalLabel">
-                                <span class="text-success">Agregar</span> nuevo <span
-                                    style="font-weight: bold;">Usuario</span>
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                        </div>
-
-                        <div class="modal-body row g-3">
-                            <div class="col-md-12">
-                                <label>Nombre de la Empresa</label>
-                                <input type="text" class="form-control" id="addNombre" name="nombre"
-                                    placeholder="Escribe el nombre de la empresa">
-                            </div>
-                        </div>
-
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-success">Guardar</button>
-                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Modal ver contratos -->
-        <div class="modal fade" id="viewContractsModal" tabindex="-1" aria-labelledby="viewContractsModalLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h3 class="modal-title">
-                            <span class="text-success" style="font-weight: bold;">Contratos</span>
-                            del Usuario
-                            <span id="viewUserName" style="font-weight: bold;"></span>
-                        </h3>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <!-- animate__animated animate__fadeInDown -->
-                    <div class="container mt-4 mb-4 t-5 "
-                        style="position: relative; z-index: 1055;">
-                        <h5 class="form-label">Buscar Contrato</h5>
-                        <div class="input-group input-group-lg mb-3">
-                            <input id="searchInput" class="form-control" type="text"
-                                placeholder="Buscar por código, Zonas o fecha" aria-label="Search">
-                            <span class="input-group-text text-dark-emphasis"><i class="bi bi-search"></i></span>
-                            <div class="btn-group ms-2">
-                                <button class="btn btn-outline-secondary dropdown-toggle" type="button"
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                    Filtrar grupo
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item group-filter" href="#" data-group="all">Todos</a></li>
-                                    <li><a class="dropdown-item group-filter" href="#" data-group="inyeccion">Zonas Inyección</a></li>
-                                    <li><a class="dropdown-item group-filter" href="#" data-group="extraccion">Zonas Extracción</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-body">
-                        <table class="table table-bordered text-center align-middle">
-                            <thead class="table-dark">
-                                <tr>
-                                    <!-- <th>#</th> -->
-                                    <th>Código</th>
-                                    <th>Fecha</th>
-                                    <th>Zona Extracción</th>
-                                    <th>Zona Inyección</th>
-                                    <th>Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody id="contractsTableBody">
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
@@ -202,6 +209,29 @@
                 const editModalInstance = new bootstrap.Modal(editUserModalEl);
                 const viewContractsModalInstance = new bootstrap.Modal(document.getElementById('viewContractsModal'));
                 const addUserModalInstance = new bootstrap.Modal(document.getElementById('addUserModal'));
+
+                // Función SweetAlert con gif y tamaño personalizado
+                function mostrarSweetMensaje(tipo, mensaje, gif = null, width = 300, height = 200, tiempo = 2500) {
+                    const config = {
+                        title: tipo === "success" ? "Correcto" :
+                            tipo === "error" ? "Error" :
+                                tipo === "warning" ? "Alerta" :
+                                    tipo === "info" ? "Información" : "Mensaje",
+                        text: mensaje,
+                        icon: tipo,
+                        timer: tiempo,
+                        showConfirmButton: false
+                    };
+
+                    if (gif) {
+                        config.imageUrl = gif;
+                        config.imageWidth = width;
+                        config.imageHeight = height;
+                        delete config.icon;
+                    }
+
+                    Swal.fire(config);
+                }
 
                 // Evento para el botón de editar
                 $('#tbody-usuarios').on('click', '.edit-btn', function () {
@@ -291,7 +321,6 @@
                     addUserModalInstance.show();
                 });
 
-
                 // Limpieza manual de backdrop
                 ['editUserModal', 'addUserModal', 'viewContractsModal'].forEach(id => {
                     document.getElementById(id).addEventListener('hidden.bs.modal', () => {
@@ -304,7 +333,6 @@
                     const modalContent = $('#addUserModal .modal-dialog');
                     modalContent.removeClass('animate__animated animate__fadeInLeft animate__fadeOutRight');
                 });
-
 
                 // Guardar cambios del formulario editar usuario
                 $('#editUserForm').submit(function (e) {
@@ -325,13 +353,35 @@
                         type: 'PUT',
                         contentType: 'application/json',
                         data: JSON.stringify(usuarioData),
-                        success: function () {
-                            const row = $('button[data-idusuario="' + usuarioData.idUsuario + '"]').closest('tr');
-                            row.find('th').text(usuarioData.nombre);
-                            editModalInstance.hide();
+                        success: function (response) {
+                            if (response.correct) {
+                                mostrarSweetMensaje(
+                                    "success",
+                                    "Contrato agregado correctamente",
+                                    "https://i.pinimg.com/originals/06/ae/07/06ae072fb343a704ee80c2c55d2da80a.gif",
+                                    300, 200, 2500
+                                );
+
+                                // Espera a que el SweetAlert termine antes de cerrar el modal
+                                setTimeout(() => {
+                                    const modalContent = $('#editUserModal .modal-dialog');
+                                    modalContent.removeClass('animate__fadeInLeft').addClass('animate__animated animate__fadeOutRight');
+
+                                    modalContent.one('animationend', function () {
+                                        editModalInstance.hide();
+                                        modalContent.removeClass('animate__animated animate__fadeOutRight');
+
+                                        // Refrescar después de cerrar modal
+                                        setTimeout(() => location.reload(), 500);
+                                    });
+                                }, 2500 + 300); // Tiempo de SweetAlert + margen
+
+                            } else {
+                                mostrarSweetMensaje("error", response.errorMessage || "Error al agregar contrato", null, 300, 200, 4000);
+                            }
                         },
                         error: function () {
-                            alert('Error al actualizar el usuario');
+                            mostrarSweetMensaje("warning", "Error al comunicar con el servidor", "https://media.tenor.com/Gjv594-ah9sAAAAM/doubt-doubt-it.gif", 250, 250, 4000);
                         }
                     });
                 });
@@ -356,6 +406,13 @@
                         data: JSON.stringify(usuarioData),
                         success: function (response) {
                             if (response.correct) {
+                                mostrarSweetMensaje(
+                                    "success",
+                                    "Contrato agregado correctamente",
+                                    "https://i.pinimg.com/originals/06/ae/07/06ae072fb343a704ee80c2c55d2da80a.gif",
+                                    300, 200, 2500
+                                );
+
                                 const nuevoUsuario = response.object;
 
                                 const rowHtml = `
@@ -405,15 +462,14 @@
                                 });
 
                             } else {
-                                alert(response.errorMessage || "No se pudo agregar el usuario");
+                                mostrarSweetMensaje("error", response.errorMessage || "Error al agregar usuario", null, 300, 200, 4000);
                             }
                         },
                         error: function () {
-                            alert("Error al comunicar con el servidor");
+                            mostrarSweetMensaje("warning", "Error al comunicar con el servidor", "https://media.tenor.com/Gjv594-ah9sAAAAM/doubt-doubt-it.gif", 250, 250, 4000);
                         }
                     });
                 });
-
 
                 // Función SweetAlert personalizada
                 function mostrarSweetMensaje(tipo, mensaje, gif = null, width = 300, height = 200, tiempo = 2500) {
@@ -481,6 +537,7 @@
 
                 // DataTable configuración
                 new DataTable('#usuarios', {
+                    responsive: true,
                     columnDefs: [
                         { targets: "_all", className: "text-center align-middle" }
                     ],

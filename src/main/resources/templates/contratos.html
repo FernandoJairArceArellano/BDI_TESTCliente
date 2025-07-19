@@ -41,7 +41,7 @@
                                     th:text="${contrato.zonaInyeccion?.nombreZona != null ? contrato.zonaInyeccion.nombreZona : 'N/A'}">
                                 </td>
                                 <td class="align-middle" data-label="Acciones">
-                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                    <div class="d-flex align-items-center gap-2 justify-content-center">
                                         <a th:href="@{/detalleContrato(idContrato=${contrato.idContrato})}"
                                             class="btn btn-success btn-md rounded-circle"
                                             style="width: 3rem; height: 3rem;" title="Ver Contrato">

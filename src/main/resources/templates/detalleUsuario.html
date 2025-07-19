@@ -16,57 +16,43 @@
                 <h1 class="fw-bold"> Detalle del Usuario</h1>
                 <!-- <span class="fw-bold" th:text="${usuario.nombre}"></span> -->
                 <div id="usuarioContainer" th:attr="data-id=${usuario.idUsuario}" style="display:none;"></div>
-
-                <!-- Botones prueba animaciones -->
-                <h5>Probar Animaciones</h5>
-                <ul>
-                    <button id="btnTestSuccess" class="btn btn-outline-success m-1">
-                        <i class="bi bi-check-circle"></i> Éxito con GIF
-                    </button>
-                    <button id="btnTestError" class="btn btn-outline-danger m-1">
-                        <i class="bi bi-x-circle"></i> Error con GIF
-                    </button>
-                    <button id="btnTestWarning" class="btn btn-outline-warning m-1">
-                        <i class="bi bi-exclamation-triangle"></i> Warning con GIF
-                    </button>
-                    <button id="btnTestRecycle" class="btn btn-outline-secondary m-1">
-                        <i class="bi bi-recycle"></i> Eliminado con GIF
-                    </button>
-                </ul>
             </div>
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
 
             <div class="row mb-3">
                 <!-- Columna de Usuario -->
-                <div class="col-md-9 d-flex">
+                <div class="col-md-9 d-flex mb-1">
                     <!-- Card Usuario -->
-                    <div th:if="${usuario}" class="card border-0 shadow flex-fill p-4  h-100">
-                        <div class="card-body p-7">
+                    <div th:if="${usuario}" class="card border-0 shadow flex-fill h-100">
+                        <div class="card-body p-5">
                             <div class="row align-items-center h-100">
                                 <div class="col-auto d-flex ms-auto ms-md-0">
                                     <div class="avatar avatar-circle avatar-xxl">
                                         <img class="avatar-img"
                                             src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg"
-                                            alt="Imagen de Empresa" width="112" height="112">
+                                            alt="Imagen de Empresa" width="150" height="150">
                                     </div>
                                 </div>
                                 <div class="col-auto me-auto d-flex flex-column">
-                                    <p><strong>Nombre:</strong> <span th:text="${usuario.nombre}"
-                                            class="small text-secondary fw-bold d-block mb-4"></span></p>
+                                    <p>
+                                        <strong class="fs-5">Nombre:</strong>
+                                        <span th:text="${usuario.nombre}"
+                                            class="small text-secondary fw-bold d-block mb-2 fs-4"></span>
+                                    </p>
                                     <div class="d-flex">
-                                        Acciones extras para el usuario
+                                        <button type="button" class="btn btn-outline-warning">Editar Datos</button>
                                     </div>
                                 </div>
-                                <div class="col-12 col-md-auto ms-auto text-center mt-8 mt-md-0">
-                                    <div class="hstack d-inline-flex gap-6">
+                                <div class="col-12 col-md-auto ms-auto text-center mt-5 mt-md-0">
+                                    <div class="hstack d-inline-flex gap-5">
                                         <div>
                                             <h4 class="h2 mb-0" th:text="${usuario.idUsuario}"></h4>
                                             <p class="text-secondary mb-0">Id Empresa</p>
                                         </div>
                                         <div class="vr"></div>
                                         <div>
-                                            <h4 class="h2 mb-0">° Contratos</h4>
+                                            <h4 class="h2 mb-0" id="resultadoContratos">° Contratos</h4>
                                             <p class="text-secondary mb-0">Contratos Resgitrados</p>
                                         </div>
                                     </div>
@@ -75,22 +61,25 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 d-flex">
+                <!-- Columna Fecha registro -->
+                <div class="col-md-3 d-flex ">
                     <!-- Card Informacion -->
                     <div class="card border-0 shadow flex-fill w-100">
                         <div class="card-body text-center">
                             <div class="row align-items-center h-100">
                                 <div class="col">
-                                    <h3 class="text-secondary">Fecha de Registro del Usuario</h3>
+                                    <h3 class="text-secondary">Fecha de Registro del Usuario <i
+                                            class="bi bi-calendar3"></i> </h3>
 
                                     <div class="chart-container w-100px h-100px mx-auto mt-3">
                                         <hr class="hr" />
-
-                                        <div class="input-group date" data-provide="datepicker">
-                                            <input type="date" class="form-control">
-                                            <div class="input-group-addon">
-                                                <span class="glyphicon glyphicon-th"></span>
-                                            </div>
+                                        <div class="bg-danger text-white p-3">
+                                            <h6 id="diaSemana" class="mb-0">Viernes</h6>
+                                            <h2 id="diaNumerico" class="display">18</h2>
+                                            <small id="mesAnio">JUL 2025</small>
+                                        </div>
+                                        <div class="bg-white text-dark p-2">
+                                            Primer contrato Registrado
                                         </div>
                                     </div>
                                 </div>
@@ -103,7 +92,7 @@
             <!-- Modal agregar nuevo contrato -->
             <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog modal-lg">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
                     <form id="addContractForm">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -151,53 +140,85 @@
                 </div>
             </div>
 
-            <!-- Columna de Contratos -->
-            <div class="col-md-7">
-                <div class="card shadow p-4 h-100">
-                    <h4 class="mb-3 text-center fw-bold">Contratos Registrados</h4>
+            <div class="row mb-3">
+                <!-- Columna de Contratos -->
+                <div class="col-md-7">
+                    <div class="card shadow p-4 h-100">
+                        <h4 class="mb-3 text-center fw-bold">Contratos Registrados</h4>
 
-                    <div id="alertContainer" class="mt-3"></div>
+                        <div id="alertContainer" class="mt-3"></div>
 
-                    <div class="container mb-3">
-                        <button type="button" id="btnAgregarContrato" class="btn btn-outline-success btn-lg"
-                            th:data-nombre="${usuario.nombre}">
-                            <i class="bi bi-plus-circle-dotted"></i> Agregar Contrato
-                        </button>
+                        <div class="container mb-3">
+                            <button type="button" id="btnAgregarContrato" class="btn btn-outline-success btn-lg"
+                                th:data-nombre="${usuario.nombre}">
+                                <i class="bi bi-plus-circle-dotted"></i> Agregar Contrato
+                            </button>
+                        </div>
+
+                        <div class="container">
+                            <table class="table table-hover table-bordered text-center align-middle" id="contratos">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Codigo Contrato</th>
+                                        <th>Fecha</th>
+                                        <th data-dt-order="disable">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="contrato : ${contratos}">
+                                        <th th:text="${contrato.codigoContrato}"></th>
+                                        <th th:data-fecha="${#dates.format(contrato.fecha, 'yyyy-MM-dd')}"
+                                            th:text="${#dates.format(contrato.fecha, 'MM/dd/yyyy')}"></th>
+                                        <th>
+                                            <a class="btn btn-success btn-sm rounded-circle"
+                                                th:href="@{/detalleContrato(idContrato=${contrato.idContrato})}"
+                                                style="width: 3rem; height: 3rem;" title="Ver contrato">
+                                                <i class="bi bi-eye fs-4"></i>
+                                            </a>
+                                            <button type="button"
+                                                class="btn btn-danger btn-sm rounded-circle delete-contrato"
+                                                th:data-id="${contrato.idContrato}" style="width: 3rem; height: 3rem;"
+                                                title="Borrar Contrato">
+                                                <i class="bi bi-trash fs-4"></i>
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-
-                    <div class="container">
-                        <table class="table table-bordered text-center align-middle" id="contratos">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th class="w-50">Codigo Contrato</th>
-                                    <th class="w-25">Fecha</th>
-                                    <th class="w-25" data-dt-order="disable">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr th:each="contrato : ${contratos}">
-                                    <th th:text="${contrato.codigoContrato}"></th>
-                                    <th th:text="${#dates.format(contrato.fecha, 'dd/MM/yyyy')}"></th>
-
-                                    <th>
-                                        <a class="btn btn-success btn-sm rounded-circle"
-                                            th:href="@{/detalleContrato(idContrato=${contrato.idContrato})}"
-                                            style="width: 3rem; height: 3rem;" title="Ver contrato">
-                                            <i class="bi bi-eye fs-4"></i>
-                                        </a>
-                                        <button type="button"
-                                            class="btn btn-danger btn-sm rounded-circle delete-contrato"
-                                            th:data-id="${contrato.idContrato}" style="width: 3rem; height: 3rem;"
-                                            title="Borrar Contrato">
-                                            <i class="bi bi-trash fs-4"></i>
-                                        </button>
-                                    </th>
-                                </tr>
-                            </tbody>
-                        </table>
+                </div>
+                <!-- Columba total a Facturar -->
+                <div class="col-md-5">
+                    <div class="card shadow p-4 h-100">
+                        <h4 class="mb-3 text-center"><span class="text-uppercase text-success fw-bold">Total</span>
+                            facturado por <span class="fw-bold" th:text="${usuario.nombre}"></span> </h4>
+                        <div class="card-header border-0 card-header-space-between">
+                            <div>
+                                <canvas id="myChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            <!-- <div class="container">
+                Botones prueba animaciones
+                <h5>Probar Animaciones</h5>
+                <ul>
+                    <button id="btnTestSuccess" class="btn btn-outline-success m-1">
+                        <i class="bi bi-check-circle"></i> Éxito con GIF
+                    </button>
+                    <button id="btnTestError" class="btn btn-outline-danger m-1">
+                        <i class="bi bi-x-circle"></i> Error con GIF
+                    </button>
+                    <button id="btnTestWarning" class="btn btn-outline-warning m-1">
+                        <i class="bi bi-exclamation-triangle"></i> Warning con GIF
+                    </button>
+                    <button id="btnTestRecycle" class="btn btn-outline-secondary m-1">
+                        <i class="bi bi-recycle"></i> Eliminado con GIF
+                    </button>
+                </ul>
+            </div> -->
         </div>
 
         <script>
@@ -361,9 +382,17 @@
                 $('#addContractForm').submit(function (e) {
                     e.preventDefault();
 
+                    const fechaInput = $('#fecha').val(); // yyyy-MM-dd
+
+                    // Convertir la fecha a un Date en la zona local a las 12:00:00 (evita desfaces por horario)
+                    const fechaLocal = new Date(fechaInput + 'T12:00:00');
+
+                    // Convertir a ISO (UTC) para evitar problemas al enviarlo al backend
+                    const fechaISO = fechaLocal.toISOString(); // Formato: 2025-07-03T18:00:00.000Z
+
                     const contratoData = {
                         codigoContrato: $('#codigoContrato').val(),
-                        fecha: $('#fecha').val(),
+                        fecha: fechaISO, // Envía la fecha en ISO con hora
                         zonaExtraccion: { nombreZona: $('#zonaExtraccion').val() },
                         zonaInyeccion: { nombreZona: $('#zonaInyeccion').val() },
                         usuario: {
@@ -395,8 +424,11 @@
                     });
                 });
 
+                // DataTable.datetime('DD MMM YYYY');
+
                 // Inicializar DataTable
                 new DataTable('#contratos', {
+                    responsive: true,
                     columnDefs: [
                         { targets: "_all", className: "text-center align-middle" }
                     ],
@@ -408,6 +440,10 @@
             });
 
             $(document).ready(function () {
+
+                const tabla = document.getElementById('contratos');
+                const tbody = tabla.querySelector('tbody');
+
                 function setMaxDate() {
                     const now = new Date();
                     const year = now.getFullYear();
@@ -417,8 +453,79 @@
                     $('#fecha').attr('max', maxDate);
                 }
 
+                function contarContratos() {
+                    const contador = document.getElementById('resultadoContratos');
+
+                    if (tbody) {
+                        const numeroFilas = tbody.rows.length;
+                        contador.textContent = numeroFilas;
+                    } else {
+                        contador.textContent = 0;
+                    }
+                }
+
+                function obtenerFechaMenor() {
+                    let fechas = [];
+
+                    $('#contratos tbody tr').each(function () {
+                        const fechaTexto = $(this).find('th[data-fecha]').data('fecha');
+
+                        if (fechaTexto) {
+                            const fechaTexto = $(this).find('th[data-fecha]').data('fecha');
+                            const partes = fechaTexto.split('-'); // yyyy-MM-dd
+                            const fecha = new Date();
+                            fecha.setFullYear(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+                            fecha.setHours(0, 0, 0, 0);
+                            fechas.push(fecha);
+                        }
+                    });
+
+                    if (fechas.length === 0) return;
+
+                    const fechaMinima = new Date(Math.min(...fechas));
+
+                    const diaSemana = fechaMinima.toLocaleDateString('es-MX', { weekday: 'long' });
+                    const diaNumerico = fechaMinima.getDate();
+                    const mes = fechaMinima.toLocaleDateString('es-MX', { month: 'short' }).toUpperCase();
+                    const anio = fechaMinima.getFullYear();
+
+                    // Pinta los valores en el HTML
+                    $('#diaSemana').text(capitalizeFirstLetter(diaSemana));
+                    $('#diaNumerico').text(diaNumerico);
+                    $('#mesAnio').text(`${mes} ${anio}`);
+                }
+
+                function capitalizeFirstLetter(string) {
+                    return string.charAt(0).toUpperCase() + string.slice(1);
+                }
+
+                // Llamadas a funciones
+                obtenerFechaMenor();
                 setMaxDate();
+                contarContratos();
             });
+
+            const ctx = document.getElementById('myChart');
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                    datasets: [{
+                        label: '# of Votes',
+                        data: [12, 19, 3, 5, 2, 3],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
         </script>
 
     </section>

@@ -15,15 +15,26 @@
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
+    <!-- chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Data Table -->
     <script src="https://cdn.datatables.net/2.3.2/js/dataTables.js"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.dataTables.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.2/moment.min.js"></script>
 
     <!-- SweetAlert -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <!-- Highcharts Maps -->
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/maps/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/mapdata/countries/mx/mx-all.js"></script>
 
     <style>
         html,
@@ -45,40 +56,29 @@
 
 
 <body>
-    <header>
-        <!-- Encabezado -->
-        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-            <div class="container-fluid">
-                <a class="navbar-brand" th:href="@{/index}">Risosu IT</a>
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" style="z-index:1100;">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/index}">Risosu IT</a>
 
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"
+                style="z-index:1100; position:relative;">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
-                        <li class="nav-item"><a class="nav-link" th:href="@{/index}">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/usuarios}">Usuarios</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/contratos}">Contratos</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/nodos}">Nodos Comerciales</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/zonas}">Zonas</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/transacciones}">Transacciones</a></li>
-                        <!-- <li class="nav-item"><a class="nav-link" th:href="@{/cajero/index}">Administrar Cajeros</a></li>
-                        <li class="nav-item"><a class="nav-link" th:href="@{/Usuario/index}">Administrar Usuarios</a> -->
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Botón de cerrar sesion -->
-                <div class="d-flex align-items-center order-0 order-lg-1 ms-lg-3 mt-2 mt-lg-0">
-                    <!-- <form th:action="@{http://localhost:8081/logout}" method="post" class="m-0">
-                        <button type="submit" class="btn btn-danger"><i class="bi bi-box-arrow-right"></i></button>
-                    </form> -->
-                </div>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" th:href="@{/index}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/dashboard}">dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/usuarios}">Usuarios</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/contratos}">Contratos</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/nodos}">Nodos Comerciales</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/zonas}">Zonas</a></li>
+                    <li class="nav-item"><a class="nav-link" th:href="@{/transacciones}">Transacciones</a></li>
+                </ul>
             </div>
-        </nav>
-    </header>
+        </div>
+    </nav>
 
     <main class="container-fluid py-4 my-5 content-scroll" layout:fragment="content">
 
