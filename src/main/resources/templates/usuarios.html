@@ -4,12 +4,6 @@
 
 <head>
     <title layout:fragment="title">Inicio</title>
-    <style>
-        .custom-modal {
-            max-width: 800px I !important;
-            width: 800 !important;
-        }
-    </style>
 </head>
 
 <body>
@@ -87,9 +81,9 @@
             <!-- Modal editar datos usuario -->
             <div class="modal animate__animated animate__fadeInLeft" id="editUserModal" tabindex="-1"
                 aria-labelledby="editUserModalLabel" aria-hidden="true">
-                <div class="modal-dialog custom-modal modal-dialog-centered ">
-                    <form id="editUserForm">
-                        <div class="modal-content">
+                <div class="modal-dialog modal-dialog-centered ">
+                    <div class="modal-content">
+                        <form id="editUserForm">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="editUserModalLabel">
                                     <span class="text-warning">Editar</span>
@@ -109,17 +103,17 @@
                                 <button type="submit" class="btn btn-primary">Guardar</button>
                                 <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancelar</button>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
 
             <!-- Modal agregar Usuario -->
             <div class="modal animate__animated" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel"
                 aria-hidden="true">
-                <div class="modal-dialog custom-modal modal-dialog-centered">
-                    <form id="addUserForm">
-                        <div class="modal-content">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <form id="addUserForm">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="addUserModalLabel">
                                     <span class="text-success">Agregar</span> nuevo <span
@@ -140,8 +134,8 @@
                                 <button type="submit" class="btn btn-success">Guardar</button>
                                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
 
@@ -408,7 +402,7 @@
                             if (response.correct) {
                                 mostrarSweetMensaje(
                                     "success",
-                                    "Contrato agregado correctamente",
+                                    "Usuario agregado correctamente",
                                     "https://i.pinimg.com/originals/06/ae/07/06ae072fb343a704ee80c2c55d2da80a.gif",
                                     300, 200, 2500
                                 );
@@ -416,50 +410,55 @@
                                 const nuevoUsuario = response.object;
 
                                 const rowHtml = `
-                                    <tr>
-                                        <th>${nuevoUsuario.nombre}</th>
-                                        <td>0</td>
-                                        <td class="align-middle">
-                                            <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
-                                                <a href="/detalleUsuario?nombre=${encodeURIComponent(nuevoUsuario.nombre)}"
-                                                    class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
-                                                    style="width: 3rem; height: 3rem;" title="Usuario">
-                                                    <i class="bi bi-person-circle fs-5"></i>
-                                                </a>
+                                                <tr>
+                                                    <th>${nuevoUsuario.nombre}</th>
+                                                    <td>0</td>
+                                                    <td class="align-middle">
+                                                        <div class="d-flex flex-column flex-md-row gap-2 justify-content-center">
+                                                            <a href="/detalleUsuario?nombre=${encodeURIComponent(nuevoUsuario.nombre)}"
+                                                                class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
+                                                                style="width: 3rem; height: 3rem;" title="Usuario">
+                                                                <i class="bi bi-person-circle fs-5"></i>
+                                                            </a>
 
-                                                <button title="Editar datos"
-                                                    class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
-                                                    style="width: 3rem; height: 3rem;"
-                                                    data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
-                                                    <i class="bi bi-pencil-square fs-5"></i>
-                                                </button>
+                                                            <button title="Editar datos"
+                                                                class="btn btn-warning btn-sm rounded-circle d-flex align-items-center justify-content-center edit-btn"
+                                                                style="width: 3rem; height: 3rem;"
+                                                                data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
+                                                                <i class="bi bi-pencil-square fs-5"></i>
+                                                            </button>
 
-                                                <button title="Ver contratos"
-                                                    class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
-                                                    style="width: 3rem; height: 3rem;"
-                                                    data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
-                                                    <i class="bi bi-person-lines-fill fs-5"></i>
-                                                </button>
+                                                            <button title="Ver contratos"
+                                                                class="btn btn-success btn-sm rounded-circle d-flex align-items-center justify-content-center view-contracts-btn"
+                                                                style="width: 3rem; height: 3rem;"
+                                                                data-idusuario="${nuevoUsuario.idUsuario}" data-nombre="${nuevoUsuario.nombre}">
+                                                                <i class="bi bi-person-lines-fill fs-5"></i>
+                                                            </button>
 
-                                                <button type="button" class="btn btn-danger btn-sm rounded-circle delete-usuario"
-                                                    data-id="${nuevoUsuario.idUsuario}" style="width: 3rem; height: 3rem;"
-                                                    title="Borrar Usuario">
-                                                    <i class="bi bi-trash fs-4"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>`;
+                                                            <button type="button" class="btn btn-danger btn-sm rounded-circle delete-usuario"
+                                                                data-id="${nuevoUsuario.idUsuario}" style="width: 3rem; height: 3rem;"
+                                                                title="Borrar Usuario">
+                                                                <i class="bi bi-trash fs-4"></i>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>`;
 
                                 $('#tbody-usuarios').append(rowHtml);
 
-                                // Animación de cierre del modal agregar usuario
-                                const modalContent = $('#addUserModal .modal-dialog');
-                                modalContent.removeClass('animate__fadeInLeft').addClass('animate__animated animate__fadeOutRight');
+                                // Esperar a que el SweetAlert termine antes de cerrar el modal
+                                setTimeout(() => {
+                                    const modalContent = $('#addUserModal .modal-dialog');
+                                    modalContent.removeClass('animate__fadeInLeft').addClass('animate__animated animate__fadeOutRight');
 
-                                modalContent.one('animationend', function () {
-                                    addUserModalInstance.hide();
-                                    modalContent.removeClass('animate__animated animate__fadeOutRight');
-                                });
+                                    modalContent.one('animationend', function () {
+                                        addUserModalInstance.hide();
+                                        modalContent.removeClass('animate__animated animate__fadeOutRight');
+
+                                        // Refrescar después de cerrar modal
+                                        setTimeout(() => location.reload(), 500);
+                                    });
+                                }, 2500 + 300); // Tiempo de SweetAlert + margen extra
 
                             } else {
                                 mostrarSweetMensaje("error", response.errorMessage || "Error al agregar usuario", null, 300, 200, 4000);

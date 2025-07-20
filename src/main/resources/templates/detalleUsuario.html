@@ -89,57 +89,6 @@
                 </div>
             </div>
 
-            <!-- Modal agregar nuevo contrato -->
-            <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
-                aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <form id="addContractForm">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="addContractModalLabel">
-                                    <span class="text-success">Agregar </span>
-                                    contrato para
-                                    <span id="modalUserName" class="fw-bold"></span>
-                                </h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                            </div>
-                            <div class="modal-body row g-3">
-                                <input type="hidden" id="idUsuario" name="idUsuario">
-
-                                <div class="col-md-6">
-                                    <label for="codigoContrato">Código Contrato</label>
-                                    <input type="text" class="form-control" id="codigoContrato" name="codigoContrato"
-                                        required>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="fecha">Fecha</label>
-                                    <input min="2000-01-01" max="" type="date" class="form-control" id="fecha"
-                                        name="fecha" required>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="zonaExtraccion">Zona de Extracción</label>
-                                    <select class="form-select" id="zonaExtraccion" name="zonaExtraccion"
-                                        required></select>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <label for="zonaInyeccion">Zona de Inyección</label>
-                                    <select class="form-select" id="zonaInyeccion" name="zonaInyeccion"
-                                        required></select>
-                                </div>
-                            </div>
-
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
             <div class="row mb-3">
                 <!-- Columna de Contratos -->
                 <div class="col-md-7">
@@ -219,6 +168,58 @@
                     </button>
                 </ul>
             </div> -->
+
+
+            <!-- Modal agregar nuevo contrato -->
+            <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <form id="addContractForm">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="addContractModalLabel">
+                                    <span class="text-success">Agregar </span>
+                                    contrato para
+                                    <span id="modalUserName" class="fw-bold"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body row g-3">
+                                <input type="hidden" id="idUsuario" name="idUsuario">
+
+                                <div class="col-md-6">
+                                    <label for="codigoContrato">Código Contrato</label>
+                                    <input type="text" class="form-control" id="codigoContrato" name="codigoContrato"
+                                        required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="fecha">Fecha</label>
+                                    <input min="2000-01-01" max="" type="date" class="form-control" id="fecha"
+                                        name="fecha" required>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="zonaExtraccion">Zona de Extracción</label>
+                                    <select class="form-select" id="zonaExtraccion" name="zonaExtraccion"
+                                        required></select>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="zonaInyeccion">Zona de Inyección</label>
+                                    <select class="form-select" id="zonaInyeccion" name="zonaInyeccion"
+                                        required></select>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
 
         <script>
