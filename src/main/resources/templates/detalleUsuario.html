@@ -4,6 +4,36 @@
 
 <head>
     <title layout:fragment="title">Usuario</title>
+    <style>
+        .wrapper {
+            width: 150px;
+            height: 150px;
+            position: relative;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wrapper::before {
+            transition: all .5s ease-in;
+            background-color: rgb(0, 194, 129);
+            position: absolute;
+            content: "";
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .wrapper:hover::before {
+            opacity: .6;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,8 +44,8 @@
             <div class="d-flex align-items-baseline justify-content-between">
                 <!-- Titulo del Usuario -->
                 <h1 class="fw-bold"> Detalle del Usuario</h1>
-                <!-- <span class="fw-bold" th:text="${usuario.nombre}"></span> -->
-                <div id="usuarioContainer" th:attr="data-id=${usuario.idUsuario}" style="display:none;"></div>
+                <!-- <span th:text="${usuario != null ? usuario.nombre : 'Usuario Desconocido'}"
+                    class="small text-secondary fw-bold d-block mb-2 fs-4"></span> -->
             </div>
 
             <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
@@ -28,7 +58,7 @@
                         <div class="card-body p-5">
                             <div class="row align-items-center h-100">
                                 <div class="col-auto d-flex ms-auto ms-md-0">
-                                    <div class="avatar avatar-circle avatar-xxl">
+                                    <div class="avatar avatar-circle avatar-xxl wrapper">
                                         <img class="avatar-img"
                                             src="https://img.freepik.com/premium-vector/default-avatar-profile-icon-social-media-user-image-gray-avatar-icon-blank-profile-silhouette-vector-illustration_561158-3407.jpg"
                                             alt="Imagen de Empresa" width="150" height="150">
@@ -41,7 +71,9 @@
                                             class="small text-secondary fw-bold d-block mb-2 fs-4"></span>
                                     </p>
                                     <div class="d-flex">
-                                        <button type="button" class="btn btn-outline-warning">Editar Datos</button>
+                                        <button title="Editar datos" class="btn btn-outline-warning edit-btn"
+                                            th:data-idusuario="${usuario.idUsuario}"
+                                            th:data-nombre="${usuario.nombre}">Editar Datos</button>
                                     </div>
                                 </div>
                                 <div class="col-12 col-md-auto ms-auto text-center mt-5 mt-md-0">
@@ -93,13 +125,13 @@
                 <!-- Columna de Contratos -->
                 <div class="col-md-7">
                     <div class="card shadow p-4 h-100">
-                        <h4 class="mb-3 text-center fw-bold">Contratos Registrados</h4>
+                        <h4 class="mb-3 text-center fw-bold fs-2">Contratos Registrados</h4>
 
                         <div id="alertContainer" class="mt-3"></div>
 
                         <div class="container mb-3">
                             <button type="button" id="btnAgregarContrato" class="btn btn-outline-success btn-lg"
-                                th:data-nombre="${usuario.nombre}">
+                                th:data-nombre="${usuario != null ? usuario.nombre : 'Usuario Desconocido'}">
                                 <i class="bi bi-plus-circle-dotted"></i> Agregar Contrato
                             </button>
                         </div>
@@ -113,7 +145,7 @@
                                         <th data-dt-order="disable">Acciones</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="tbody-contrato">
                                     <tr th:each="contrato : ${contratos}">
                                         <th th:text="${contrato.codigoContrato}"></th>
                                         <th th:data-fecha="${#dates.format(contrato.fecha, 'yyyy-MM-dd')}"
@@ -137,19 +169,54 @@
                         </div>
                     </div>
                 </div>
-                <!-- Columba total a Facturar -->
+                <!-- Columna total a Facturar -->
                 <div class="col-md-5">
-                    <div class="card shadow p-4 h-100">
-                        <h4 class="mb-3 text-center"><span class="text-uppercase text-success fw-bold">Total</span>
-                            facturado por <span class="fw-bold" th:text="${usuario.nombre}"></span> </h4>
-                        <div class="card-header border-0 card-header-space-between">
-                            <div>
-                                <canvas id="myChart"></canvas>
-                            </div>
+                    <div class="card shadow p-4 h-100 text-center">
+                        <h4 class="mb-3 text-success fw-bold text-uppercase">
+                            Total facturado por <span class="fw-bold text-dark"
+                                th:text="${usuario != null ? usuario.nombre : 'Usuario Desconocido'}"></span>
+                        </h4>
+                        <div class="container mb-3">
+                            <h5>Filtros</h5>
+                            <ul>
+                                <button id="btnTestSuccess" class="btn btn-outline-success m-1">
+                                    <i class="bi bi-check-circle"></i> Filtro para día
+                                </button>
+                                <button id="btnTestError" class="btn btn-outline-danger m-1">
+                                    <i class="bi bi-x-circle"></i> Filtro para Mes
+                                </button>
+                                <button id="btnTestWarning" class="btn btn-outline-warning m-1">
+                                    <i class="bi bi-exclamation-triangle"></i> Filtro para año
+                                </button>
+                                <button id="btnTestRecycle" class="btn btn-outline-secondary m-1">
+                                    <i class="bi bi-recycle"></i> Eliminado con GIF
+                                </button>
+                                <div class="btn-group ms-2">
+                                    <button class="btn btn-outline-secondary dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                        Filtrar grupo
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item group-filter" href="#" data-group="all">Todos</a>
+                                        </li>
+                                        <li><a class="dropdown-item group-filter" href="#" data-group="recepcion">Nodos
+                                                de Recepción</a>
+                                        </li>
+                                        <li><a class="dropdown-item group-filter" href="#" data-group="entrega">Nodos de
+                                                Entrega</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </ul>
+                        </div>
+                        <div class="card-header border-0 d-flex justify-content-center mt-4">
+                            <canvas id="myChart"></canvas>
                         </div>
                     </div>
                 </div>
+
             </div>
+
             <!-- <div class="container">
                 Botones prueba animaciones
                 <h5>Probar Animaciones</h5>
@@ -168,7 +235,6 @@
                     </button>
                 </ul>
             </div> -->
-
 
             <!-- Modal agregar nuevo contrato -->
             <div class="modal fade" id="addContractModal" tabindex="-1" aria-labelledby="addContractModalLabel"
@@ -220,10 +286,42 @@
                     </form>
                 </div>
             </div>
+
+            <!-- Modal editar datos usuario -->
+            <div class="modal animate__animated animate__fadeInLeft" id="editUserModal" tabindex="-1"
+                aria-labelledby="editUserModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered ">
+                    <div class="modal-content">
+                        <form id="editUserForm">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="editUserModalLabel">
+                                    <span class="text-warning">Editar</span>
+                                    datos de
+                                    <span id="modalUserName" style="font-weight: bold;"></span>
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body row g-3">
+                                <input type="hidden" id="idUsuario" name="idUsuario">
+                                <div class="col-md-12">
+                                    <label>Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                                <button type="button" class="btn btn-danger " data-bs-dismiss="modal">Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {
+                const editUserModalEl = document.getElementById('editUserModal');
+                const editModalInstance = new bootstrap.Modal(editUserModalEl);
                 const modalElement = document.getElementById('addContractModal');
                 if (!modalElement) return;
 
@@ -295,6 +393,36 @@
                     );
                 });
 
+                // Evento para el botón de editar datos de usuario
+                $(document).on('click', '.edit-btn', function () {
+                    $('#editUserForm')[0].reset();
+                    const nombre = $(this).data('nombre');
+                    const idUsuario = $(this).data('idusuario');
+
+                    $('#idUsuario').val(idUsuario);
+                    $('#nombre').val(nombre);
+                    $('#editUserModal #modalUserName').text(nombre);
+
+                    const modalContent = $('#editUserModal .modal-dialog');
+                    modalContent.removeClass('animate__fadeOutRight').addClass('animate__animated animate__fadeInLeft');
+
+                    editModalInstance.show();
+                });
+
+                // Animación personalizada al cancelar el modal de editar usuario
+                $('#editUserModal .btn-danger[data-bs-dismiss="modal"]').click(function (e) {
+                    e.preventDefault();
+
+                    const modalContent = $('#editUserModal .modal-dialog');
+
+                    modalContent.removeClass('animate__fadeInLeft').addClass('animate__animated animate__fadeOutRight');
+
+                    modalContent.one('animationend', function () {
+                        editModalInstance.hide();
+                        modalContent.removeClass('animate__animated animate__fadeOutRight');
+                    });
+                });
+
                 // Abrir modal agregar contrato
                 $(document).on('click', '#btnAgregarContrato', function () {
                     $('#addContractForm')[0].reset();
@@ -352,6 +480,59 @@
                         }
                     });
                 });
+
+                // Guardar cambios del formulario editar usuario
+                $('#editUserForm').submit(function (e) {
+                    e.preventDefault();
+
+                    const usuarioData = {
+                        idUsuario: $('#idUsuario').val(),
+                        nombre: $('#nombre').val()
+                    };
+
+                    if (!usuarioData.idUsuario || !usuarioData.nombre) {
+                        alert("Por favor complete todos los campos");
+                        return;
+                    }
+
+                    $.ajax({
+                        url: 'http://localhost:8081/api/usuario/v1/updateUsuario',
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(usuarioData),
+                        success: function (response) {
+                            if (response.correct) {
+                                mostrarSweetMensaje(
+                                    "success",
+                                    "Contrato agregado correctamente",
+                                    "https://i.pinimg.com/originals/06/ae/07/06ae072fb343a704ee80c2c55d2da80a.gif",
+                                    300, 200, 2500
+                                );
+
+                                // Espera a que el SweetAlert termine antes de cerrar el modal
+                                setTimeout(() => {
+                                    const modalContent = $('#editUserModal .modal-dialog');
+                                    modalContent.removeClass('animate__fadeInLeft').addClass('animate__animated animate__fadeOutRight');
+
+                                    modalContent.one('animationend', function () {
+                                        editModalInstance.hide();
+                                        modalContent.removeClass('animate__animated animate__fadeOutRight');
+
+                                        // Refrescar después de cerrar modal
+                                        setTimeout(() => location.reload(), 500);
+                                    });
+                                }, 2500 + 300); // Tiempo de SweetAlert + margen
+
+                            } else {
+                                mostrarSweetMensaje("error", response.errorMessage || "Error al agregar contrato", null, 300, 200, 4000);
+                            }
+                        },
+                        error: function () {
+                            mostrarSweetMensaje("warning", "Error al comunicar con el servidor", "https://media.tenor.com/Gjv594-ah9sAAAAM/doubt-doubt-it.gif", 250, 250, 4000);
+                        }
+                    });
+                });
+
 
                 // Cargar zonas
                 function cargarZonas() {
@@ -472,7 +653,6 @@
                         const fechaTexto = $(this).find('th[data-fecha]').data('fecha');
 
                         if (fechaTexto) {
-                            const fechaTexto = $(this).find('th[data-fecha]').data('fecha');
                             const partes = fechaTexto.split('-'); // yyyy-MM-dd
                             const fecha = new Date();
                             fecha.setFullYear(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
@@ -500,31 +680,46 @@
                     return string.charAt(0).toUpperCase() + string.slice(1);
                 }
 
+                function obtenerNombreContratos() {
+                    var listaDeFilas = [];
+                    $('tbody tr').each(function () {
+                        var filaActual = [];
+                        $(this).find('td').each(function () {
+                            filaActual.push($(this).text());
+                        });
+                        listaDeFilas.push(filaActual);
+                    });
+
+                    console.log(listaDeFilas);
+                }
+
                 // Llamadas a funciones
                 obtenerFechaMenor();
                 setMaxDate();
                 contarContratos();
-            });
+                obtenerNombreContratos();
 
-            const ctx = document.getElementById('myChart');
+                const ctx = document.getElementById('myChart');
 
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                    datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                        datasets: [{
+                            label: '# of Votes',
+                            data: [12, 19, 3, 5, 2, 3],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
                         }
                     }
-                }
+                });
+
             });
 
         </script>
