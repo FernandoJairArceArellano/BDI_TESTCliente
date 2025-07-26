@@ -198,16 +198,105 @@ public class PaginaController {
 
     @GetMapping("/detalleZonaInyeccion")
     public String mostrarDetalleZonaInyeccion(@RequestParam("nombreZona") String nombreZona, Model model) {
+        Result result = new Result();
+        try {
+            ResponseEntity<Result<Usuario>> responseUsuario = restTemplate.exchange(
+                    apiNodoUrl + "/buscarPorZonaInyeccion?nombreZona=" + nombreZona,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Usuario>>() {
+            });
+
+            Result<Usuario> resultUsuario = responseUsuario.getBody();
+
+            if (resultUsuario != null && resultUsuario.correct) {
+                model.addAttribute("usuarios", resultUsuario.objects);
+            } else {
+                model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
         return "detalleZona";
     }
 
     @GetMapping("/detalleZonaExtraccion")
     public String mostrarDetalleZonaExtraccion(@RequestParam("nombreZona") String nombreZona, Model model) {
+        Result result = new Result();
+        try {
+            ResponseEntity<Result<Usuario>> responseUsuario = restTemplate.exchange(
+                    apiNodoUrl + "/buscarPorZonaExtraccion?nombreZona=" + nombreZona,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Usuario>>() {
+            });
+
+            Result<Usuario> resultUsuario = responseUsuario.getBody();
+
+            if (resultUsuario != null && resultUsuario.correct) {
+                model.addAttribute("usuarios", resultUsuario.objects);
+            } else {
+                model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
         return "detalleZona";
     }
 
     @GetMapping("/detalleNodoComercial")
-    public String mostrarDetalleNodoComercial(@RequestParam("nombreNodoComercial") String codigoNodoComercial, Model model) {
+    public String mostrarDetalleNodoComercial(@RequestParam("codigoNodo") String codigoNodo, Model model) {
+        Result result = new Result();
+        char evaluarCodigoNodo = codigoNodo.charAt(0);
+        try {
+            if (evaluarCodigoNodo == 'V') {
+                result.correct = true;
+                System.out.println("Se entro en los nodos de Recepcción\nLetra evaluada: " + evaluarCodigoNodo);
+                ResponseEntity<Result<Usuario>> responseUsuario = restTemplate.exchange(
+                        apiNodoUrl + "/buscarPorNodoRecepccion?codigoNodo=" + codigoNodo,
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        new ParameterizedTypeReference<Result<Usuario>>() {
+                });
+
+                Result<Usuario> resultUsuario = responseUsuario.getBody();
+
+                if (resultUsuario != null && resultUsuario.correct) {
+                    model.addAttribute("usuarios", resultUsuario.objects);
+                } else {
+                    model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
+                }
+
+            } else if (evaluarCodigoNodo == 'E' || evaluarCodigoNodo == 'N') {
+                result.correct = true;
+                System.out.println("Se entro en los nodos de Entrega\nLetra evaluada: " + evaluarCodigoNodo);
+                ResponseEntity<Result<Usuario>> responseUsuario = restTemplate.exchange(
+                        apiNodoUrl + "/buscarPorNodoEntrega?codigoNodo=" + codigoNodo,
+                        HttpMethod.GET,
+                        HttpEntity.EMPTY,
+                        new ParameterizedTypeReference<Result<Usuario>>() {
+                });
+
+                Result<Usuario> resultUsuario = responseUsuario.getBody();
+                if (resultUsuario != null && resultUsuario.correct) {
+                    model.addAttribute("usuarios", resultUsuario.objects);
+                } else {
+                    model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
+                }
+
+            } else {
+                result.correct = false;
+                result.errorMessage = "No se contro ningun nodo con el codigo: " + codigoNodo;
+            }
+        } catch (Exception ex) {
+            result.correct = false;
+            result.errorMessage = ex.getLocalizedMessage();
+            result.ex = ex;
+        }
         return "detalleNodoComercial";
     }
 
@@ -277,6 +366,40 @@ public class PaginaController {
             }
         } catch (Exception ex) {
             model.addAttribute("error", "Error al obtener usuario: " + ex.getMessage());
+        }
+        return "detalleUsuario";
+    }
+
+    @GetMapping("/detalleUsuarioId")
+    public String mostrarDetalleUsuarioPorId(@RequestParam("idUsuario") int idUsuario, Model model) {
+        try {
+            ResponseEntity<Result<Usuario>> responseUsuario = restTemplate.exchange(
+                    apiUsuarioUrl + "/por-id?idUsuario=" + idUsuario,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Usuario>>() {
+            });
+
+            Result<Usuario> resultUsuario = responseUsuario.getBody();
+
+            ResponseEntity<Result<Contrato>> responseContrato = restTemplate.exchange(
+                    apiContratoUrl + "/por-usuario-id-Vista?idUsuario=" + idUsuario,
+                    HttpMethod.GET,
+                    HttpEntity.EMPTY,
+                    new ParameterizedTypeReference<Result<Contrato>>() {
+            });
+
+            Result<Contrato> resultContratos = responseContrato.getBody();
+
+            if (resultUsuario != null && resultUsuario.correct && resultContratos != null && resultContratos.correct) {
+                model.addAttribute("usuario", resultUsuario.object);
+                model.addAttribute("contratos", resultContratos.objects);
+            } else {
+                model.addAttribute("error", resultUsuario != null ? resultUsuario.errorMessage : "Usuario no encontrado.");
+            }
+
+        } catch (Exception ex) {
+            model.addAttribute("error", "Error al obtener el usuario:" + ex.getMessage());
         }
         return "detalleUsuario";
     }

@@ -41,7 +41,8 @@
                                 </td>
                                 <td class="align-middle text-center" data-label="Acciones">
                                     <div class="d-flex align-items-center gap-2 justify-content-center">
-                                        <a th:href="@{/detalleUsuario(nombre=${usuario.nombre})}"
+                                        <!-- detalleUsuario(nombre=${usuario.nombre}) -->
+                                        <a th:href="@{/detalleUsuarioId(idUsuario=${usuario.idUsuario})}"
                                             class="btn btn-primary rounded-circle d-flex align-items-center justify-content-center"
                                             style="width: 3rem; height: 3rem;" title="Ver usuario">
                                             <i class="bi bi-person-circle fs-5"></i>

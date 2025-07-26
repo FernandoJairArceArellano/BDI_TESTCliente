@@ -47,7 +47,8 @@
                                             style="width: 3rem; height: 3rem;" title="Ver Contrato">
                                             <i class="bi bi-eye fs-5"></i>
                                         </a>
-                                        <a th:href="@{/detalleUsuario(nombre=${contrato.usuario.nombre})}"
+                                        <!-- detalleUsuario(nombre=${contrato.usuario.nombre}) -->
+                                        <a th:href="@{/detalleUsuarioId(idUsuario=${contrato.usuario.idUsuario})}"
                                             class="btn btn-primary btn-md rounded-circle"
                                             style="width: 3rem; height: 3rem;" title="Usuario Del Contrato">
                                             <i class="bi bi-person-circle fs-5"></i>
